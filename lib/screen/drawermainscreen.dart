@@ -258,9 +258,9 @@ import 'package:tobeto_app/screen/catalog.dart';
 import 'package:tobeto_app/screen/floatactionmenu.dart';
 import 'package:tobeto_app/screen/homescreen.dart';
 import 'package:tobeto_app/screen/loginscreen.dart';
+import 'package:tobeto_app/screen/profil_edit.dart';
 import 'package:tobeto_app/screen/profile.dart';
 import 'package:tobeto_app/screen/reviews.dart';
-import 'package:tobeto_app/widget/profile_edit_widget/edit_profile.dart';
 
 class DrawerMainScreen extends StatefulWidget {
   const DrawerMainScreen({Key? key}) : super(key: key);
@@ -335,7 +335,7 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
                 Navigator.pop(ctx); // İç menüyü kapat
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EditProfile()),
+                  MaterialPageRoute(builder: (context) => ProfileInformation()),
                 );
               },
             ),
