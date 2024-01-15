@@ -275,7 +275,7 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const Reviews(),
-    const Profile(),
+    const ProfilePage(),
     const Catalog(),
     const Calendar(),
   ];
