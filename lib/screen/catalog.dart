@@ -11,8 +11,6 @@ class _CatalogState extends State<Catalog> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:
-            AppBar(),
         body: Center(child: Text("Katalog", style: TextStyle(color: Theme.of(context).colorScheme.onBackground))),);
   }
 }

@@ -11,8 +11,6 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:
-            AppBar(),
         body: Center(child: Text("Takvim", style: TextStyle(color: Theme.of(context).colorScheme.onBackground))),);
   }
 }

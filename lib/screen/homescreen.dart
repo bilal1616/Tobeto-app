@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:tobeto_app/widget/announcementandnews.dart';
-import 'package:tobeto_app/widget/applications.dart';
-import 'package:tobeto_app/widget/examcard.dart';
-import 'package:tobeto_app/widget/gradient_buttons.dart';
-import 'package:tobeto_app/widget/surveys.dart';
-import 'package:tobeto_app/widget/education.dart';
+// import 'package:google_fonts/google_fonts.dart';
+import 'package:tobeto_app/widget/home_widget/announcementandnews.dart';
+import 'package:tobeto_app/widget/home_widget/applications.dart';
+import 'package:tobeto_app/widget/home_widget/education.dart';
+import 'package:tobeto_app/widget/home_widget/examcard.dart';
+import 'package:tobeto_app/widget/home_widget/gradient_buttons.dart';
+import 'package:tobeto_app/widget/home_widget/surveys.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _selectedOption = '';
+  String _selectedOption = 'Başvurularım';
   Map<String, bool> visibility = {
     "Başvurularım": true, // Başlangıçta sadece bu görünür
     "Eğitimlerim": false,
@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context)
                                     .textTheme
-                                    .bodyLarge!
+                                    .bodyMedium!
                                     .color),
                       ),
                     ],
@@ -176,84 +176,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      Wrap(
-                        spacing: 8.0, // yatay boşluk
-                        runSpacing: 4.0, // dikey boşluk
-                        children: <String>[
-                          "Başvurularım",
-                          "Eğitimlerim",
-                          "Duyuru ve Haberlerim",
-                          "Anketlerim"
-                        ].map((title) => _buildOption(context, title)).toList(),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Wrap(
+                          spacing: 8.0, // yatay boşluk
+                          runSpacing: 4.0, // dikey boşluk
+                          children: <String>[
+                            "Başvurularım",
+                            "Eğitimlerim",
+                            "Duyuru ve Haberlerim",
+                            "Anketlerim"
+                          ]
+                              .map((title) => _buildOption(context, title))
+                              .toList(),
+                        ),
                       ),
                       SizedBox(height: 18),
                       if (visibility["Başvurularım"]!) Applications(),
-                      if (visibility["Eğitimlerim"]!) ...[
-                        EducationCard(
-                          title: 'Dr. Ecmel Ayral\'dan Hoşgeldin Mesajı',
-                          subtitle: '21 Eylül 2023 15:20',
-                          buttonText: 'Eğitime Git',
-                          imageUrl: 'assets/ecmal.jpg',
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.03),
-                        EducationCard(
-                          title: 'Eğitimlere Nasıl Katılırım?',
-                          subtitle: '8 Eylül 2023 17:06',
-                          buttonText: 'Eğitime Git',
-                          imageUrl: 'assets/ıstanbulkodlyr.jpg',
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.03),
-                        EducationCard(
-                          title: 'Herkes için Kodlama - 1A',
-                          subtitle: '18 Eylül 2023 03:00',
-                          buttonText: 'Eğitime Git',
-                          imageUrl: 'assets/tobetoarkapln.jpg',
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.03),
-                        EducationCard(
-                          title: 'İstanbul Kodluyor Proje Aşamaları',
-                          subtitle: '31 Ağustos 2023 13:01',
-                          buttonText: 'Eğitime Git',
-                          imageUrl: 'assets/ıstanbulkodlyr.jpg',
-                        ),
-                        SizedBox(height: 16),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: Icon(
-                                Icons.navigate_next,
-                                color: Colors.black,
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  shape: CircleBorder(
-                                      side: BorderSide(
-                                          style: BorderStyle.solid))),
-                            ),
-                            Text(
-                              "Daha fazla göster",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(
-                                      color: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.color ??
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .background),
-                            ),
-                            SizedBox(height: 18)
-                          ],
-                        ),
-                      ],
+                      if (visibility["Eğitimlerim"]!) _buildEducationCards(),
                       if (visibility["Duyuru ve Haberlerim"]!)
                         Announcementandnews(),
                       if (visibility["Anketlerim"]!) Surveys(),
@@ -263,97 +203,104 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 ExamCard(), // ExamCard'ı burada kullanıyoruz
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                GradientButton(
-                  text: 'Profilini oluştur',
-                  onPressed: () {
-                    // Profil oluşturma işlemi
-                  },
-                  onSecondaryPressed: () {
-                    // 'Başla' butonuna basıldığında yapılacak işlem
-                  },
-                  gradientColors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).colorScheme.secondary
-                  ],
-                ),
-                SizedBox(height: 16), // Butonlar arası boşluk
-                GradientButton(
-                  text: 'Kendini değerlendir',
-                  onPressed: () {
-                    // Kendini değerlendirme işlemi
-                  },
-                  onSecondaryPressed: () {
-                    // 'Başla' butonuna basıldığında yapılacak işlem
-                  },
-                  gradientColors: [
-                    Theme.of(context).primaryColorLight,
-                    Theme.of(context).primaryColorDark
-                  ],
-                ),
-                SizedBox(height: 16), // Butonlar arası boşluk
-                GradientButton(
-                  text: 'Öğrenmeye başla',
-                  onPressed: () {
-                    // Öğrenmeye başlama işlemi
-                  },
-                  onSecondaryPressed: () {
-                    // 'Başla' butonuna basıldığında yapılacak işlem
-                  },
-                  gradientColors: [
-                    Theme.of(context).colorScheme.onPrimary,
-                    Theme.of(context).primaryColor
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.15,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary),
-                    child: Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Image.asset("assets/beyazlogo.png",
-                                    width: 120, height: 60),
-                                ElevatedButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      "Bize Ulaşın",
-                                      style: GoogleFonts.poppins(
-                                          color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.color ??
-                                              Theme.of(context)
-                                                  .colorScheme
-                                                  .background),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            Theme.of(context).cardColor))
-                              ],
-                            ),
-                            Text(
-                              "© 2022 Tobeto",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .background,
-                                      fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        )),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      GradientButton(
+                        text: 'Profilini oluştur',
+                        onPressed: () {
+                          // Profil oluşturma işlemi
+                        },
+                        onSecondaryPressed: () {
+                          // 'Başla' butonuna basıldığında yapılacak işlem
+                        },
+                        gradientColors: [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).colorScheme.secondary
+                        ],
+                      ),
+                      SizedBox(height: 16), // Butonlar arası boşluk
+                      GradientButton(
+                        text: 'Kendini değerlendir',
+                        onPressed: () {
+                          // Kendini değerlendirme işlemi
+                        },
+                        onSecondaryPressed: () {
+                          // 'Başla' butonuna basıldığında yapılacak işlem
+                        },
+                        gradientColors: [
+                          Theme.of(context).primaryColorLight,
+                          Theme.of(context).primaryColorDark
+                        ],
+                      ),
+                      SizedBox(height: 16), // Butonlar arası boşluk
+                      GradientButton(
+                        text: 'Öğrenmeye başla',
+                        onPressed: () {
+                          // Öğrenmeye başlama işlemi
+                        },
+                        onSecondaryPressed: () {
+                          // 'Başla' butonuna basıldığında yapılacak işlem
+                        },
+                        gradientColors: [
+                          Theme.of(context).colorScheme.onPrimary,
+                          Theme.of(context).primaryColor
+                        ],
+                      ),
+                    ],
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                // Align(
+                //   alignment: Alignment.bottomCenter,
+                //   child: Container(
+                //     width: MediaQuery.of(context).size.width,
+                //     height: MediaQuery.of(context).size.height * 0.15,
+                //     decoration: BoxDecoration(
+                //         color: Theme.of(context).colorScheme.primary),
+                //     child: Padding(
+                //         padding: EdgeInsets.all(15),
+                //         child: Column(
+                //           children: [
+                //             Row(
+                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //               children: [
+                //                 Image.asset("assets/beyazlogo.png",
+                //                     width: 120, height: 60),
+                //                 ElevatedButton(
+                //                     onPressed: () {},
+                //                     child: Text(
+                //                       "Bize Ulaşın",
+                //                       style: GoogleFonts.poppins(
+                //                           color: Theme.of(context)
+                //                                   .textTheme
+                //                                   .bodyLarge
+                //                                   ?.color ??
+                //                               Theme.of(context)
+                //                                   .colorScheme
+                //                                   .background),
+                //                     ),
+                //                     style: ElevatedButton.styleFrom(
+                //                         backgroundColor:
+                //                             Theme.of(context).cardColor))
+                //               ],
+                //             ),
+                //             Text(
+                //               "© 2022 Tobeto",
+                //               style: Theme.of(context)
+                //                   .textTheme
+                //                   .bodySmall!
+                //                   .copyWith(
+                //                       color: Theme.of(context)
+                //                           .colorScheme
+                //                           .background,
+                //                       fontWeight: FontWeight.bold),
+                //             )
+                //           ],
+                //         )),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -368,9 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return InkWell(
       onTap: () {
         setState(() {
-          // Önce tüm görünürlükleri false yap
           visibility.updateAll((key, value) => false);
-          // Seçilen başlığa göre görünürlüğü true yap
           visibility[title] = true;
           _selectedOption = title;
         });
@@ -387,8 +332,47 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(
             color: Theme.of(context).textTheme.bodyLarge?.color ??
                 Theme.of(context).colorScheme.background,
+            fontSize: 12,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildEducationCards() {
+    return Container(
+      height: 300.0,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: <Widget>[
+          EducationCard(
+            title: 'Dr. Ecmel Ayral\'dan Hoşgeldin Mesajı',
+            subtitle: '21 Eylül 2023 15:20',
+            buttonText: 'Eğitime Git',
+            imageUrl: 'assets/ecmal.jpg',
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          EducationCard(
+            title: 'Eğitimlere Nasıl Katılırım?',
+            subtitle: '8 Eylül 2023 17:06',
+            buttonText: 'Eğitime Git',
+            imageUrl: 'assets/ıstanbulkodlyr.jpg',
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          EducationCard(
+            title: 'Herkes için Kodlama - 1A',
+            subtitle: '18 Eylül 2023 03:00',
+            buttonText: 'Eğitime Git',
+            imageUrl: 'assets/tobetoarkapln.jpg',
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          EducationCard(
+            title: 'İstanbul Kodluyor Proje Aşamaları',
+            subtitle: '31 Ağustos 2023 13:01',
+            buttonText: 'Eğitime Git',
+            imageUrl: 'assets/ıstanbulkodlyr.jpg',
+          ),
+        ],
       ),
     );
   }

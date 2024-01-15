@@ -11,8 +11,6 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:
-            AppBar(),
         body: Center(child: Text("Profilim", style: TextStyle(color: Theme.of(context).colorScheme.onBackground))),);
   }
 }
