@@ -383,6 +383,3 @@ class _CatalogState extends State<Catalog> {
     );
   }
 }
-
-//catalog
-

@@ -252,55 +252,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                // Align(
-                //   alignment: Alignment.bottomCenter,
-                //   child: Container(
-                //     width: MediaQuery.of(context).size.width,
-                //     height: MediaQuery.of(context).size.height * 0.15,
-                //     decoration: BoxDecoration(
-                //         color: Theme.of(context).colorScheme.primary),
-                //     child: Padding(
-                //         padding: EdgeInsets.all(15),
-                //         child: Column(
-                //           children: [
-                //             Row(
-                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //               children: [
-                //                 Image.asset("assets/beyazlogo.png",
-                //                     width: 120, height: 60),
-                //                 ElevatedButton(
-                //                     onPressed: () {},
-                //                     child: Text(
-                //                       "Bize Ulaşın",
-                //                       style: GoogleFonts.poppins(
-                //                           color: Theme.of(context)
-                //                                   .textTheme
-                //                                   .bodyLarge
-                //                                   ?.color ??
-                //                               Theme.of(context)
-                //                                   .colorScheme
-                //                                   .background),
-                //                     ),
-                //                     style: ElevatedButton.styleFrom(
-                //                         backgroundColor:
-                //                             Theme.of(context).cardColor))
-                //               ],
-                //             ),
-                //             Text(
-                //               "© 2022 Tobeto",
-                //               style: Theme.of(context)
-                //                   .textTheme
-                //                   .bodySmall!
-                //                   .copyWith(
-                //                       color: Theme.of(context)
-                //                           .colorScheme
-                //                           .background,
-                //                       fontWeight: FontWeight.bold),
-                //             )
-                //           ],
-                //         )),
-                //   ),
-                // ),
               ],
             ),
           ),
