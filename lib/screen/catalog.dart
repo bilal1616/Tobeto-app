@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tobeto_app/widget/catalog_widget/catalog_data.dart';
+import 'package:tobeto_app/widget/catalog_widget/catalog_pagination.dart';
+import 'package:tobeto_app/widget/catalog_widget/catalog_widget.dart';
+import 'package:tobeto_app/widget/catalog_widget/filter_dialog.dart';
 
 class Catalog extends StatefulWidget {
   const Catalog({Key? key}) : super(key: key);
@@ -8,33 +12,7 @@ class Catalog extends StatefulWidget {
 }
 
 class _CatalogState extends State<Catalog> {
-  int currentPage = 1;
-
-  List<String> filters = [
-    'Bana Özel',
-    'Kategori',
-    'Eğitimler',
-    'Seviye',
-    'Konu',
-    'Yazılım Dili',
-    'Eğitmen',
-    'Durum',
-  ];
-
-  // Seçilen filtreleri saklamak için bir harita
-  Map<String, String> selectedFilters = {};
-
-  // Kategori filtresi için altındaki içerikler
-  String categoryFilter = 'Tüm Eğitimler';
-  bool showCategoryFilterContent = false;
-
-  List<String> categoryOptions = [
-    'Tüm Eğitimler',
-    'Ücretli Eğitimler',
-    'Ücretsiz Eğitimler',
-  ];
-
-  String searchText = '';
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,344 +20,104 @@ class _CatalogState extends State<Catalog> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-              alignment: Alignment.bottomLeft,
-              children: [
-                Image.asset(
-                  'assets/banner.png',
-                  width: double.infinity,
-                  height: 250.0,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Öğrenmeye",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 5.0),
-                      Text(
-                        "Başla !",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 36.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 15.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            children: [
-                              Icon(Icons.search, color: Colors.grey),
-                              SizedBox(width: 8.0),
-                              Expanded(
-                                child: TextField(
-                                  style: TextStyle(color: Colors.black),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      searchText = value;
-                                    });
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: 'Eğitim arayın...',
-                                    border: InputBorder.none,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 40.0),
+            // Banner
             Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Tıklandığında filtreleme penceresi açılır
-                  _showFilterDialog(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 135, 39, 176),
+              decoration: BoxDecoration(
+                image: const DecorationImage(
+                  image: AssetImage('assets/banner.png'),
+                  fit: BoxFit.fill,
                 ),
-                child: Text(
-                  "Filtrele",
-                  style: TextStyle(
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment:
+                      MainAxisAlignment.start, // Bu satır güncellendi
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start, // Yatay hizalama için eklendi
+                  children: [
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Öğrenmeye \nbaşla !",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 38.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        hintText: "Eğitim arayın...",
+                        hintStyle: const TextStyle(fontSize: 15),
+                        prefixIcon: const Icon(Icons.search),
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+            // Filtrele Butonu
+            // Catalog sınıfına eklemek için
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                minimumSize: const Size(350, 35),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    // Filtreleme dialog'unu çağır
+                    return FilterDialog();
+                  },
+                );
+              },
+              child: const Text(
+                "Filtrele",
+                style: TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.0,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+            // CatalogModel Kartları
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: catalogList.length,
+              itemBuilder: (ctx, index) => Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width *
+                      0.9, // Genişliği ayarlandı
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CatalogWidget(catalogModel: catalogList[index]),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10), // Boşluk eklendi
-            _buildCard(
-              imageUrl: 'assets/resim1.jpg',
-              duration: '4s 14dk',
-              title: 'Dinle, Anla, İfade Et: Etkili İletişim Gelişim Yolculuğu',
-            ),
-            SizedBox(height: 10), // Boşluk eklendi
-            _buildCard(
-              imageUrl: 'assets/resim2.jpg',
-              duration: '40dk',
-              title: 'Sürdürülebilir Bir Dünya için Bireysel Farkındalık',
-            ),
-            SizedBox(height: 10), // Boşluk eklendi
-            _buildCard(
-              imageUrl: 'assets/resim3.jpg',
-              duration: '53dk',
-              title: 'Hibrit Yaşamda Duyguyu Düzenleme',
-            ),
-            // Diğer kart içerikleri buraya eklenir
-
-            SizedBox(height: 20),
-            buildPageButtons(),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+            PaginationWidget(), // Sayfa geçiş butonlarını ekleyin
+            SizedBox(height: MediaQuery.of(context).size.height * 0.075),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildCard(
-      {required String imageUrl,
-      required String duration,
-      required String title}) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.0),
-      child: Card(
-        elevation: 5.0,
-        margin: EdgeInsets.all(0),
-        color: Colors.grey,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  Image.asset(
-                    imageUrl,
-                    width: double.infinity,
-                    height: 250.0,
-                    fit: BoxFit.cover,
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.play_circle_fill_outlined,
-                      color: Colors.purple,
-                      size: 40,
-                    ),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Icon(Icons.person, color: Colors.white, size: 16),
-                  SizedBox(width: 5),
-                  Text(
-                    'Gürkan İlişen',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold, // Font'u kalınlaştırıldı
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Icon(Icons.access_time, color: Colors.white, size: 16),
-                  SizedBox(width: 5),
-                  Text(
-                    duration,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold, // Font'u kalınlaştırıldı
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold, // Font'u kalınlaştırıldı
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildPageButtons() {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          buildPageButton("<"),
-          buildPageButton(1),
-          buildPageButton(2),
-          buildPageButton(3),
-          buildPageButton(4),
-          buildPageButton(5),
-          buildPageButton(">"),
-        ],
-      ),
-    );
-  }
-
-  Widget buildPageButton(dynamic page) {
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: ElevatedButton(
-        onPressed: () {
-          // Sayfa numarasına gitmek için kullanılacak kod buraya gelecek
-        },
-        style: ElevatedButton.styleFrom(
-          minimumSize: Size(40, 40),
-          padding: EdgeInsets.all(0),
-          backgroundColor:
-              page == currentPage ? Colors.purple : Colors.grey,
-        ),
-        child: Text('$page', style: TextStyle(fontSize: 14)),
-      ),
-    );
-  }
-
-  // Filtreleme penceresini gösteren metod
-  Future<void> _showFilterDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return AlertDialog(
-                title: Text('Filtreleme'),
-                content: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (String filter in filters)
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              selectedFilters[filter] = 'Seçildi';
-                            });
-          
-                            // Kategori butonuna tıklandığında altında içerikler gösterilsin
-                            if (filter == 'Kategori') {
-                              showCategoryFilterContent = true;
-                            } else {
-                              // Diğer filtreler için seçimleri temizle
-                              selectedFilters.remove('Tüm Eğitimler');
-                              selectedFilters.remove('Ücretli Eğitimler');
-                              selectedFilters.remove('Ücretsiz Eğitimler');
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 40),
-                            foregroundColor:
-                                filter == 'Kategori' ? Colors.black : null,
-                            backgroundColor:
-                                filter == 'Kategori' ? Colors.purple : Colors.grey,
-                          ),
-                          child: Text(
-                            filter,
-                            style: TextStyle(
-                              color: filter == 'Kategori' ? Colors.black : null,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      if (showCategoryFilterContent)
-                        Column(
-                          children: [
-                            SizedBox(height: 10),
-                            _buildCategoryFilterContent(),
-                          ],
-                        ),
-                      SizedBox(height: 30),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Filtrele'),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  // Kategori filtresi içeriklerini gösteren metod
-  Widget _buildCategoryFilterContent() {
-    return Column(
-      children: [
-        SizedBox(height: 10),
-        TextField(
-          decoration: InputDecoration(
-            hintText: 'Eğitim arayın...',
-          ),
-        ),
-        SizedBox(height: 10),
-        for (String option in categoryOptions)
-          _buildCategoryFilterItem(option),
-      ],
-    );
-  }
-
-  // Kategori filtresi içerik öğesi
-  Widget _buildCategoryFilterItem(String label) {
-    return Row(
-      children: [
-        Checkbox(
-          value: selectedFilters.containsKey(label),
-          onChanged: (bool? value) {
-            setState(() {
-              if (value != null && value) {
-                selectedFilters[label] = 'Seçildi';
-              } else {
-                selectedFilters.remove(label);
-              }
-            });
-          },
-        ),
-        Text(label),
-      ],
     );
   }
 }
