@@ -106,7 +106,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: const InputDecoration(labelText: "E-posta"),
                             autocorrect: false,
                             keyboardType: TextInputType.emailAddress,
-                            validator: (value) {},
                             onSaved: (newValue) {
                               _email = newValue!;
                             },
