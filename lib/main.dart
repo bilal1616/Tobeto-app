@@ -13,6 +13,7 @@ void main() async {
   );
 
   runApp(MyApp());
+  
 }
 
 class MyApp extends StatelessWidget {
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.hasData) {
             return const LoginScreen();
           }
-          return const DrawerMainScreen();
+          return const LoginScreen();
         },
       ),
     );

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tobeto_app/screen/drawermainscreen.dart';
 import 'package:tobeto_app/theme/app_color.dart';
 
@@ -27,14 +28,16 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       if (_isLogin) {
         // Giriş Sayfası
-        final userCredentials = await firebaseAuthInstance.signInWithEmailAndPassword(
+        final userCredentials =
+            await firebaseAuthInstance.signInWithEmailAndPassword(
           email: _email,
           password: _password,
         );
         print(userCredentials);
       } else {
         // Kayıt Sayfası
-        final userCredentials = await firebaseAuthInstance.createUserWithEmailAndPassword(
+        final userCredentials =
+            await firebaseAuthInstance.createUserWithEmailAndPassword(
           email: _email,
           password: _password,
         );
@@ -46,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
             .set({'email': _email});
       }
 
-      // Navigate to DrawerMainScreen after successful login or registration
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const DrawerMainScreen(),
@@ -60,8 +62,35 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      // Google ile giriş yapma akışını başlat
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Google hesabı seçilmediyse işlemi sonlandır
+      if (googleUser == null) return null;
+
+      // Google kimlik bilgilerini al
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Firebase için bir kimlik belirteci oluştur
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Firebase ile kullanıcıyı giriş yap
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      // Hata işleme
+      print(e);
+      return null;
+    }
+  }
+
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     bool isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     String imagePath =
@@ -102,43 +131,46 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                             height: MediaQuery.of(context).size.height *
                                 0.02), // Boşluk ekleme
-                          TextFormField(
-                            decoration: const InputDecoration(labelText: "E-posta"),
-                            autocorrect: false,
-                            keyboardType: TextInputType.emailAddress,
-                            onSaved: (newValue) {
-                              _email = newValue!;
-                            },
-                          ),
-                            
+                        TextFormField(
+                          decoration:
+                              const InputDecoration(labelText: "E-posta"),
+                          autocorrect: false,
+                          keyboardType: TextInputType.emailAddress,
+                          onSaved: (newValue) {
+                            _email = newValue!;
+                          },
+                        ),
+
                         SizedBox(
                             height: MediaQuery.of(context).size.height *
                                 0.02), // Boşluk ekleme
-                          TextFormField(
-                            decoration: const InputDecoration(labelText: "Şifre"),
-                            autocorrect: false,
-                            obscureText: true,
-                            onSaved: (newValue) {
-                              _password = newValue!;
-                            },
-                          ),
+                        TextFormField(
+                          decoration: const InputDecoration(labelText: "Şifre"),
+                          autocorrect: false,
+                          obscureText: true,
+                          onSaved: (newValue) {
+                            _password = newValue!;
+                          },
+                        ),
                         SizedBox(
                             height: MediaQuery.of(context).size.height *
                                 0.015), // Boşluk ekleme
-                         ElevatedButton(
-                            onPressed: () {
-                              _submit();
-                            },
-                            child: Text(_isLogin ? "Giriş Yap" : "Kayıt Ol"),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLogin = !_isLogin;
-                              });
-                            },
-                            child: Text(_isLogin ? "Kayıt Sayfasına Git" : "Giriş Sayfasına Git"),
-                          ),
+                        ElevatedButton(
+                          onPressed: () {
+                            _submit();
+                          },
+                          child: Text(_isLogin ? "Giriş Yap" : "Kayıt Ol"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLogin = !_isLogin;
+                            });
+                          },
+                          child: Text(_isLogin
+                              ? "Kayıt Sayfasına Git"
+                              : "Giriş Sayfasına Git"),
+                        ),
                         SizedBox(
                             height: MediaQuery.of(context).size.height *
                                 0.015), // Boşluk ekleme
@@ -146,8 +178,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ElevatedButton(
-                              onPressed: () {
-                                // Google ile giriş yapma işlemleri
+                              onPressed: () async {
+                                UserCredential? userCredential =
+                                    await signInWithGoogle();
+                                if (userCredential != null) {
+                                  // Google ile giriş başarılı, ana ekrana yönlendir
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DrawerMainScreen(),
+                                    ),
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColor.favoriteButtonColor,
