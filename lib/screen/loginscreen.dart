@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tobeto_app/screen/drawermainscreen.dart';
 import 'package:tobeto_app/theme/app_color.dart';
+
+final firebaseAuthInstance = FirebaseAuth.instance;
+final firebaseFirestore = FirebaseFirestore.instance;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,6 +22,42 @@ class _LoginScreenState extends State<LoginScreen> {
       TextEditingController(); // Kayıt için e-posta
   bool _isPasswordVisible = false;
   bool _isRegisterScreen = false; // Hangi ekranın gösterileceğini kontrol et
+  final _formKey = GlobalKey<FormState>();
+  var _isLogin = true;
+  var _email = '';
+  var _password = '';
+
+   void _submit() async {
+    _formKey.currentState!.save();
+
+    if (_isLogin) {
+      // Giriş Sayfası
+      try {
+        final userCredentials = await firebaseAuthInstance
+            .signInWithEmailAndPassword(email: _email, password: _password);
+        print(userCredentials);
+      } on FirebaseAuthException catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(error.message ?? "Giriş Başarısız")));
+      }
+    } else {
+      // Kayıt Sayfası
+      try {
+        final userCredentials = await firebaseAuthInstance
+            .createUserWithEmailAndPassword(email: _email, password: _password);
+        print(userCredentials);
+        firebaseFirestore
+            .collection("users")
+            .doc(userCredentials.user!
+                .uid) // içerisine id aldığında o id'yi almadığına AUTO-ID kullanır.
+            .set({'email': _email}); // Verilen değeri ilgili dökümana yazar.
+      } on FirebaseAuthException catch (error) {
+        // Hata mesajı göster..
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(error.message ?? "Kayıt başarısız.")));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
