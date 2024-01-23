@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tobeto_app/screen/drawermainscreen.dart';
 import 'package:tobeto_app/theme/app_color.dart';
+
+final firebaseAuthInstance = FirebaseAuth.instance;
+final firebaseFirestore = FirebaseFirestore.instance;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -11,21 +16,57 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _emailController =
-      TextEditingController(); // Kayıt için e-posta
-  bool _isPasswordVisible = false;
-  bool _isRegisterScreen = false; // Hangi ekranın gösterileceğini kontrol et
+  final _formKey = GlobalKey<FormState>();
+  var _isLogin = true;
+  var _email = '';
+  var _password = '';
+
+  void _submit() async {
+    _formKey.currentState!.save();
+
+    try {
+      if (_isLogin) {
+        // Giriş Sayfası
+        final userCredentials = await firebaseAuthInstance.signInWithEmailAndPassword(
+          email: _email,
+          password: _password,
+        );
+        print(userCredentials);
+      } else {
+        // Kayıt Sayfası
+        final userCredentials = await firebaseAuthInstance.createUserWithEmailAndPassword(
+          email: _email,
+          password: _password,
+        );
+        print(userCredentials);
+
+        await firebaseFirestore
+            .collection("users")
+            .doc(userCredentials.user!.uid)
+            .set({'email': _email});
+      }
+
+      // Navigate to DrawerMainScreen after successful login or registration
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const DrawerMainScreen(),
+        ),
+      );
+    } on FirebaseAuthException catch (error) {
+      // Hata mesajı göster..
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.message ?? "Giriş/Kayıt başarısız.")),
+      );
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     bool isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     String imagePath =
         isDarkMode ? "assets/tobeto-logo-dark.png" : "assets/tobeto-logo.png";
     String imagePath1 = isDarkMode ? "assets/dark.png" : "assets/light.png";
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
@@ -51,166 +92,119 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center, // İçeriği ortalama
-                    children: [
-                      Image.asset(imagePath, width: 150, height: 75),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height *
-                              0.02), // Boşluk ekleme
-                      _isRegisterScreen
-                          ? TextField(
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(Icons.email),
-                                label: const Text("E-Posta"),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                contentPadding: const EdgeInsets.all(8),
-                              ),
-                            )
-                          : Container(),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height *
-                              0.02), // Boşluk ekleme
-                      TextField(
-                        controller: _usernameController,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person_outline),
-                          label: const Text("Kullanıcı Ad"),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // İçeriği ortalama
+                      children: [
+                        Image.asset(imagePath, width: 150, height: 75),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height *
+                                0.02), // Boşluk ekleme
+                          TextFormField(
+                            decoration: const InputDecoration(labelText: "E-posta"),
+                            autocorrect: false,
+                            keyboardType: TextInputType.emailAddress,
+                            onSaved: (newValue) {
+                              _email = newValue!;
+                            },
                           ),
-                          contentPadding: const EdgeInsets.all(8),
-                        ),
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height *
-                              0.02), // Boşluk ekleme
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: !_isPasswordVisible,
-                        decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _isPasswordVisible = !_isPasswordVisible;
-                                });
+                            
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height *
+                                0.02), // Boşluk ekleme
+                          TextFormField(
+                            decoration: const InputDecoration(labelText: "Şifre"),
+                            autocorrect: false,
+                            obscureText: true,
+                            onSaved: (newValue) {
+                              _password = newValue!;
+                            },
+                          ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height *
+                                0.015), // Boşluk ekleme
+                         ElevatedButton(
+                            onPressed: () {
+                              _submit();
+                            },
+                            child: Text(_isLogin ? "Giriş Yap" : "Kayıt Ol"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _isLogin = !_isLogin;
+                              });
+                            },
+                            child: Text(_isLogin ? "Kayıt Sayfasına Git" : "Giriş Sayfasına Git"),
+                          ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height *
+                                0.015), // Boşluk ekleme
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                // Google ile giriş yapma işlemleri
                               },
-                              child: Icon(
-                                _isPasswordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColor.favoriteButtonColor,
+                                minimumSize: Size(60, 60),
+                                shape: CircleBorder(),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Icon(FontAwesomeIcons.google,
+                                    color: Colors.white),
                               ),
                             ),
-                            label: const Text("Parola"),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                            ElevatedButton(
+                              onPressed: () {
+                                // GitHub ile giriş yapma işlemleri
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                minimumSize: Size(60, 60),
+                                shape: CircleBorder(),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Icon(FontAwesomeIcons.github,
+                                    color: Colors.white),
+                              ),
                             ),
-                            contentPadding: const EdgeInsets.all(8)),
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height *
-                              0.015), // Boşluk ekleme
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_isRegisterScreen) {
-                            // Kayıt işlemleri
-                          } else {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const DrawerMainScreen()),
-                            );
-                          }
-                        },
-                        child:
-                            Text(_isRegisterScreen ? "Kayıt Ol" : "Giriş Yap"),
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 35)),
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height *
-                              0.015), // Boşluk ekleme
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              // Google ile giriş yapma işlemleri
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColor.favoriteButtonColor,
-                              minimumSize: Size(60, 60),
-                              shape: CircleBorder(),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Apple ile giriş yapma işlemleri
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                minimumSize: Size(60, 60),
+                                shape: CircleBorder(),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Icon(FontAwesomeIcons.apple,
+                                    color: Colors.white),
+                              ),
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Icon(FontAwesomeIcons.google,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              // GitHub ile giriş yapma işlemleri
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              minimumSize: Size(60, 60),
-                              shape: CircleBorder(),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Icon(FontAwesomeIcons.github,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Apple ile giriş yapma işlemleri
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              minimumSize: Size(60, 60),
-                              shape: CircleBorder(),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Icon(FontAwesomeIcons.apple,
-                                  color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height *
-                              0.015), // Boşluk ekleme
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _isRegisterScreen = !_isRegisterScreen;
-                          });
-                        },
-                        child: Text(
-                          _isRegisterScreen ? "Giriş Ekranına Dön" : "Kayıt Ol",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
+                          ],
                         ),
-                      ),
-                      const Divider(), // Divider ekleyin
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height *
-                              0.009), // Boşluk ekleme
-                      InkWell(
-                        onTap: () {},
-                        child: const Text("Parolamı Unuttum"),
-                      ),
-                    ],
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height *
+                                0.015), // Boşluk ekleme
+                        const Divider(), // Divider ekleyin
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height *
+                                0.009), // Boşluk ekleme
+                        InkWell(
+                          onTap: () {},
+                          child: const Text("Parolamı Unuttum"),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
