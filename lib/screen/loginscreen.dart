@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var _isLogin = true;
   var _email = '';
   var _password = '';
+  var _username = '';
 
   void _submit() async {
     _formKey.currentState!.save();
@@ -46,7 +47,10 @@ class _LoginScreenState extends State<LoginScreen> {
         await firebaseFirestore
             .collection("users")
             .doc(userCredentials.user!.uid)
-            .set({'email': _email});
+            .set({
+          'email': _email,
+          'username': _username,
+        });
       }
 
       Navigator.of(context).pushReplacement(
@@ -114,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
               height:
-                  MediaQuery.of(context).size.height * 0.63, // Konteyner boyutu
+                  MediaQuery.of(context).size.height * 0.645, // Konteyner boyutu
               decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(24)),
@@ -128,9 +132,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           MainAxisAlignment.center, // İçeriği ortalama
                       children: [
                         Image.asset(imagePath, width: 150, height: 75),
+                        TextFormField(
+                          decoration:
+                              const InputDecoration(labelText: "Kullanıcı Adı"),
+                          autocorrect: false,
+                          onSaved: (newValue) {
+                            _username = newValue!;
+                          },
+                        ),
                         SizedBox(
                             height: MediaQuery.of(context).size.height *
-                                0.02), // Boşluk ekleme
+                                0.005), // Boşluk ekleme
                         TextFormField(
                           decoration:
                               const InputDecoration(labelText: "E-posta"),
@@ -140,10 +152,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             _email = newValue!;
                           },
                         ),
-
                         SizedBox(
                             height: MediaQuery.of(context).size.height *
-                                0.02), // Boşluk ekleme
+                                0.005), // Boşluk ekleme
                         TextFormField(
                           decoration: const InputDecoration(labelText: "Şifre"),
                           autocorrect: false,
