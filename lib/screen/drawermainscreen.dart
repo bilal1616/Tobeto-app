@@ -27,7 +27,7 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
     const Reviews(),
     const ProfilePage(),
     const Catalog(),
-    const Calendar(),
+    const CalendarPage(),
   ];
 
   @override
@@ -220,23 +220,6 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
             label: 'Daha Fazla',
           ),
         ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text(_username ?? 'Kullanıcı Adı'),
-              accountEmail: null,
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(
-                  Icons.person,
-                  color: Colors.black,
-                ),
-              ),
-            )
-          ],
-        ),
       ),
     );
   }
