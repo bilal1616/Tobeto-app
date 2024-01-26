@@ -42,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
           email: _email,
           password: _password,
         );
-        print(userCredentials);
 
         await firebaseFirestore
             .collection("users")

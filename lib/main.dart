@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tobeto_app/firebase_options.dart';
+import 'package:tobeto_app/screen/drawermainscreen.dart';
 import 'package:tobeto_app/screen/loginscreen.dart';
 import 'package:tobeto_app/theme/app_theme.dart';
 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const LoginScreen();
+            return const DrawerMainScreen();
           }
           return const LoginScreen();
         },
