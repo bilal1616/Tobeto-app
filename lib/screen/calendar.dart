@@ -11,7 +11,7 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  final CalendarFormat _calendarFormat = CalendarFormat.month;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   List<CalendarEvent> _events = [];
@@ -26,9 +26,8 @@ class _CalendarPageState extends State<CalendarPage> {
     final snapshot =
         await FirebaseFirestore.instance.collection('calendar').get();
     setState(() {
-      _events = snapshot.docs
-          .map((doc) => CalendarEvent.fromFirestore(doc))
-          .toList();
+      _events =
+          snapshot.docs.map((doc) => CalendarEvent.fromFirestore(doc)).toList();
     });
   }
 
@@ -43,11 +42,18 @@ class _CalendarPageState extends State<CalendarPage> {
             firstDay: DateTime(1990),
             lastDay: DateTime(2050),
             calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) => _events.any((event) => isSameDay(day, event.date)),
+            selectedDayPredicate: (day) =>
+                _events.any((event) => isSameDay(day, event.date)),
             onDaySelected: (selectedDay, focusedDay) {
-              _focusedDay = focusedDay;
-              _selectedDay = selectedDay;
-              setState(() {});
+              setState(() {
+                _focusedDay = focusedDay;
+                _selectedDay = selectedDay;
+              });
+            },
+            onFormatChanged: (format) {
+              setState(() {
+                _calendarFormat = format;
+              });
             },
             calendarStyle: CalendarStyle(
               todayDecoration: BoxDecoration(
