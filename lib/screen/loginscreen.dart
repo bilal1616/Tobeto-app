@@ -116,8 +116,8 @@ class _LoginScreenState extends State<LoginScreen> {
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
-              height:
-                  MediaQuery.of(context).size.height * 0.645, // Konteyner boyutu
+              height: MediaQuery.of(context).size.height *
+                  0.645, // Konteyner boyutu
               decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(24)),
