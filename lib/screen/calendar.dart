@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tobeto_app/widget/calendar_widget/calendar_model.dart';
@@ -23,12 +25,43 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   Future<void> fetchEvents() async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('calendar').get();
-    setState(() {
-      _events =
-          snapshot.docs.map((doc) => CalendarEvent.fromFirestore(doc)).toList();
-    });
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final userId = user.uid;
+        List<CalendarEvent> events = [];
+
+        if (user.providerData
+            .any((userInfo) => userInfo.providerId == 'google.com')) {
+          // Google ile giriş yaptıysa, calendar koleksiyonundan verileri al
+          final calendarCollection =
+              FirebaseFirestore.instance.collection('calendar');
+          final snapshot = await calendarCollection.get();
+          events = snapshot.docs
+              .map((doc) => CalendarEvent.fromFirestore(doc))
+              .toList();
+        } else {
+          // E-posta ile giriş yaptıysa, kullanıcının belirli bir ID'si olmalıdır
+          final userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get();
+          if (userDoc.exists) {
+            final calendarCollection = userDoc.reference.collection('calendar');
+            final snapshot = await calendarCollection.get();
+            events = snapshot.docs
+                .map((doc) => CalendarEvent.fromFirestore(doc))
+                .toList();
+          }
+        }
+
+        setState(() {
+          _events = events;
+        });
+      }
+    } catch (error) {
+      print('Takvim etkinlikleri alınırken hata oluştu: $error');
+    }
   }
 
   @override
@@ -108,17 +141,33 @@ class _CalendarPageState extends State<CalendarPage> {
         itemCount: _events.length,
         itemBuilder: (context, index) {
           final event = _events[index];
+          final formattedDate =
+              DateFormat('dd/MM/yyyy HH:mm').format(event.date!);
+
           return ListTile(
-            title: Text('Eğitim: ${event.education ?? ''}'),
+            title: Text(
+              'Eğitim: ${event.education ?? ''}',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Eğitmen: ${event.instructor ?? ''}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  'Tarih: ${event.date?.day}/${event.date?.month}/${event.date?.year}',
+                  'Tarih: $formattedDate',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -136,6 +185,9 @@ class _CalendarPageState extends State<CalendarPage> {
         itemCount: selectedEvents.length,
         itemBuilder: (context, index) {
           final event = selectedEvents[index];
+          final formattedDate =
+              DateFormat('dd/MM/yyyy HH:mm').format(event.date!);
+
           return ListTile(
             title: Text('Eğitim: ${event.education ?? ''}'),
             subtitle: Column(
@@ -146,7 +198,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  'Tarih: ${event.date?.day}/${event.date?.month}/${event.date?.year}',
+                  'Tarih: $formattedDate',
                 ),
               ],
             ),
