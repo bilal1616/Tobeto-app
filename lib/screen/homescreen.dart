@@ -176,27 +176,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Wrap(
-                          spacing: 8.0, // yatay boşluk
-                          runSpacing: 4.0, // dikey boşluk
-                          children: <String>[
-                            "Başvurularım",
-                            "Eğitimlerim",
-                            "Duyuru ve Haberlerim",
-                            "Anketlerim"
-                          ]
-                              .map((title) => _buildOption(context, title))
-                              .toList(),
-                        ),
-                      ),
-                      SizedBox(height: 18),
-                      if (visibility["Başvurularım"]!) Applications(),
-                      if (visibility["Eğitimlerim"]!) _buildEducationCards(),
-                      if (visibility["Duyuru ve Haberlerim"]!)
-                        Announcementandnews(),
-                      if (visibility["Anketlerim"]!) Surveys(),
+                      // Menü butonlarının olduğu kısım
+                      _buildMenuButtonsSection(),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
                     ],
                   ),
                 ),
@@ -260,6 +243,95 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildMenuButtonsSection() {
+    
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Başlığı sola hizalama
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
+            child: Text(
+              'Bilgilendirme',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.titleLarge?.color,
+              ),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildMenuButton(
+                context,
+                'Başvurularım',
+                Applications(),
+                Colors.lightBlue.shade200, // Pastel mavi renk
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01), // Butonlar arası boşluk
+              _buildMenuButton(
+                context,
+                'Eğitimlerim',
+                EducationPage(),
+                Colors.lightGreen.shade200, // Pastel yeşil renk
+              ),
+            ],
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.01), // Dikey boşluk
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildMenuButton(
+                context,
+                'Duyuru ve Haberlerim',
+                Announcementandnews(),
+                Colors.pink.shade200, // Pastel pembe renk
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01), // Butonlar arası boşluk
+              _buildMenuButton(
+                context,
+                'Anketlerim',
+                Surveys(),
+                Colors.orange.shade200, // Pastel turuncu renk
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuButton(BuildContext context, String title, Widget page, Color bgColor) {
+    double width = MediaQuery.of(context).size.width / 2.15 - 10;
+    double height = width / 1.75;
+
+    return Container(
+      width: width,
+      height: height,
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => page),
+          );
+        },
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 12.1, fontWeight: FontWeight.bold),
+        ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          backgroundColor: bgColor, // Farklı renkler kullanıldı
+        ),
+      ),
+    );
+  }
+
   Widget _buildOption(BuildContext context, String title) {
     bool isSelected = _selectedOption == title;
 
@@ -286,44 +358,6 @@ class _HomeScreenState extends State<HomeScreen> {
             fontSize: 12,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildEducationCards() {
-    return Container(
-      height: 300.0,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          EducationCard(
-            title: 'Dr. Ecmel Ayral\'dan Hoşgeldin Mesajı',
-            subtitle: '21 Eylül 2023 15:20',
-            buttonText: 'Eğitime Git',
-            imageUrl: 'assets/ecmal.jpg',
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          EducationCard(
-            title: 'Eğitimlere Nasıl Katılırım?',
-            subtitle: '8 Eylül 2023 17:06',
-            buttonText: 'Eğitime Git',
-            imageUrl: 'assets/ıstanbulkodlyr.jpg',
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          EducationCard(
-            title: 'Herkes için Kodlama - 1A',
-            subtitle: '18 Eylül 2023 03:00',
-            buttonText: 'Eğitime Git',
-            imageUrl: 'assets/tobetoarkapln.jpg',
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          EducationCard(
-            title: 'İstanbul Kodluyor Proje Aşamaları',
-            subtitle: '31 Ağustos 2023 13:01',
-            buttonText: 'Eğitime Git',
-            imageUrl: 'assets/ıstanbulkodlyr.jpg',
-          ),
-        ],
       ),
     );
   }

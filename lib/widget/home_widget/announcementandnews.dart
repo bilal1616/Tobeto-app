@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Announcementandnews extends StatefulWidget {
-  const Announcementandnews({Key? key}) : super(key: key);
-
-  @override
-  _AnnouncementandnewsState createState() => _AnnouncementandnewsState();
-}
-
-class _AnnouncementandnewsState extends State<Announcementandnews> {
+class Announcementandnews extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final announcements = [
@@ -25,9 +18,15 @@ class _AnnouncementandnewsState extends State<Announcementandnews> {
       },
     ];
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Duyuru ve Haberlerim'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: ListView(
         children: announcements.map((announcement) => _buildAnnouncementCard(announcement, context)).toList(),
       ),
     );
@@ -35,11 +34,12 @@ class _AnnouncementandnewsState extends State<Announcementandnews> {
 
   Widget _buildAnnouncementCard(Map<String, String> announcement, BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.80,
+        height: MediaQuery.of(context).size.height * 0.19, // Card yüksekliği azaltıldı
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           border: Border(
