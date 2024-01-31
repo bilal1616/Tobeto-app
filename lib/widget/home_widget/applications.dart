@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-class Applications extends StatefulWidget {
-  const Applications({Key? key}) : super(key: key);
-
-  @override
-  _ApplicationsState createState() => _ApplicationsState();
-}
-
-class _ApplicationsState extends State<Applications> {
+class Applications extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Başvurularım'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: ListView(
         children: [
           _buildApplicationCard(context),
-          SizedBox(width: 8), // Kartlar arasında boşluk
           _buildApplicationCard(context),
+          _buildApplicationCard(context),
+          // Daha fazla card eklenebilir
         ],
       ),
     );
@@ -30,15 +30,6 @@ class _ApplicationsState extends State<Applications> {
       elevation: 4,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.80, // Kart genişliği
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          border: Border(
-            left: BorderSide(
-              color: Theme.of(context).colorScheme.secondary,
-              width: 8,
-            ),
-          ),
-        ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -77,6 +68,7 @@ class _ApplicationsState extends State<Applications> {
                   context, 'İstanbul Kodluyor Başvuru Formu onaylandı.'),
               _buildListTile(
                   context, 'İstanbul Kodluyor Belge Yükleme Formu onaylandı.'),
+              // Daha fazla list tile eklenebilir
             ],
           ),
         ),
