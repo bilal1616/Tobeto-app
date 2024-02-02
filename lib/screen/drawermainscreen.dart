@@ -38,25 +38,21 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
 
   void _loadUsername() async {
     User? user = FirebaseAuth.instance.currentUser;
-
     if (user != null) {
-      String? username;
-
-      //Firebase den kullanıcı adını çek
-      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore
-          .instance
-          .collection("users")
+      // Kullanıcının Firestore'daki bilgisini çek
+      final userDocSnapshot = await FirebaseFirestore.instance
+          .collection('users')
           .doc(user.uid)
           .get();
 
-      if (userDoc.exists) {
-        username = userDoc["username"];
-      }
-
-      //Google ile giriş yapıldıysa ve firebase den kullanıcı adı çekilmediyse
-      if (user.providerData.isNotEmpty && username == null) {
-        //google kullanıcı adını kullan
-        username = user.providerData.first.displayName;
+      String? username;
+      // Firestore'da kayıtlı kullanıcı adı varsa kullan
+      if (userDocSnapshot.exists &&
+          userDocSnapshot.data()!.containsKey('username')) {
+        username = userDocSnapshot.data()!['username'];
+      } else {
+        // Firestore'da kullanıcı adı yoksa Google'dan alınan adı kullan
+        username = user.displayName;
       }
 
       setState(() {

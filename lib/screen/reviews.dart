@@ -4,7 +4,9 @@ import 'package:tobeto_app/widget/reviews_widget/reviews_descriptioncard.dart';
 import 'package:tobeto_app/widget/reviews_widget/reviews_notbutton.dart';
 
 class Reviews extends StatefulWidget {
-  const Reviews({Key? key}) : super(key: key);
+  final bool
+      showAppBar; // AppBar'ı gösterip göstermeme durumunu tutacak parametre
+  const Reviews({Key? key, this.showAppBar = false}) : super(key: key);
 
   @override
   _ReviewsState createState() => _ReviewsState();
@@ -13,6 +15,11 @@ class Reviews extends StatefulWidget {
 class _ReviewsState extends State<Reviews> {
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+    String imagePath =
+        isDarkMode ? "assets/tobeto-logo-dark.png" : "assets/tobeto-logo.png";
+
     // Bu liste kartların her biri için bilgileri içerir.
     final List<Map<String, dynamic>> categories = [
       {
@@ -48,6 +55,20 @@ class _ReviewsState extends State<Reviews> {
     ];
 
     return Scaffold(
+      appBar: widget.showAppBar
+          ? AppBar(
+              // showAppBar true ise AppBar göster
+              title: Image.asset(
+                imagePath,
+                width: 120,
+                height: 60,
+              ),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
+            )
+          : null, // showAppBar false ise AppBar gösterme
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -106,7 +127,8 @@ class _ReviewsState extends State<Reviews> {
               ReviewsButton(),
               ReviewsNotbutton(),
               SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              ...categories.map((category) => Card(
+              ...categories
+                  .map((category) => Card(
                         elevation: 4.0,
                         margin: const EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 16.0),
