@@ -25,42 +25,27 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   Future<void> fetchEvents() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final userId = user.uid;
-        List<CalendarEvent> events = [];
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userId = user.uid;
+      List<CalendarEvent> events = [];
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
 
-        if (user.providerData
-            .any((userInfo) => userInfo.providerId == 'google.com')) {
-          // Google ile giriş yaptıysa, calendar koleksiyonundan verileri al
-          final calendarCollection =
-              FirebaseFirestore.instance.collection('calendar');
-          final snapshot = await calendarCollection.get();
-          events = snapshot.docs
-              .map((doc) => CalendarEvent.fromFirestore(doc))
-              .toList();
-        } else {
-          // E-posta ile giriş yaptıysa, kullanıcının belirli bir ID'si olmalıdır
-          final userDoc = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userId)
-              .get();
-          if (userDoc.exists) {
-            final calendarCollection = userDoc.reference.collection('calendar');
-            final snapshot = await calendarCollection.get();
-            events = snapshot.docs
-                .map((doc) => CalendarEvent.fromFirestore(doc))
-                .toList();
-          }
-        }
-
-        setState(() {
-          _events = events;
-        });
+      // Tüm kullanıcılar için users koleksiyonundan verileri al
+      if (userDoc.exists) {
+        final calendarCollection = userDoc.reference.collection('calendar');
+        final snapshot = await calendarCollection.get();
+        events = snapshot.docs
+            .map((doc) => CalendarEvent.fromFirestore(doc))
+            .toList();
       }
-    } catch (error) {
-      print('Takvim etkinlikleri alınırken hata oluştu: $error');
+
+      setState(() {
+        _events = events;
+      });
     }
   }
 

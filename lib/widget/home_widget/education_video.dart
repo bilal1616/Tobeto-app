@@ -1,11 +1,18 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class VideoApp extends StatefulWidget {
   final String videoPath;
+  final String title;
+  final String subtitle;
 
-  VideoApp({Key? key, required this.videoPath}) : super(key: key);
+  VideoApp({
+    Key? key,
+    required this.videoPath,
+    required this.title,
+    required this.subtitle,
+  }) : super(key: key);
 
   @override
   _VideoAppState createState() => _VideoAppState();
@@ -24,7 +31,8 @@ class _VideoAppState extends State<VideoApp> {
 
   Future<void> _initializeVideoPlayer() async {
     try {
-      String videoUrl = await FirebaseStorage.instance.ref(widget.videoPath).getDownloadURL();
+      String videoUrl =
+          await FirebaseStorage.instance.ref(widget.videoPath).getDownloadURL();
       _controller = VideoPlayerController.networkUrl(Uri.parse(videoUrl))
         ..initialize().then((_) {
           setState(() {
@@ -43,7 +51,7 @@ class _VideoAppState extends State<VideoApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Video Player'),
+        title: Text('Eğitim İçeriği'),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -90,15 +98,51 @@ class _VideoAppState extends State<VideoApp> {
               backgroundColor: Colors.grey[800]!,
             ),
           ),
-          _buildControls(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildControls(),
+              _buildFavoriteButton(),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero, // İçerik boşluğunu sıfırla
+                  leading: null, // Başlangıç öğesi yok
+                  title: Text(
+                    widget.title,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    widget.subtitle,
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
+  Widget _buildFavoriteButton() {
+    return IconButton(
+      icon: Icon(Icons.favorite_border),
+      onPressed: () {
+        // Favori ekleme işlemi
+      },
+    );
+  }
+
   Widget _buildControls() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
           icon: Icon(
@@ -106,7 +150,9 @@ class _VideoAppState extends State<VideoApp> {
           ),
           onPressed: () {
             setState(() {
-              _controller!.value.isPlaying ? _controller!.pause() : _controller!.play();
+              _controller!.value.isPlaying
+                  ? _controller!.pause()
+                  : _controller!.play();
             });
           },
         ),

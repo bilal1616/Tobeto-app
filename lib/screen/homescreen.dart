@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tobeto_app/screen/catalog.dart';
+import 'package:tobeto_app/screen/profil_edit.dart';
+import 'package:tobeto_app/screen/reviews.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:tobeto_app/widget/home_widget/announcementandnews.dart';
 import 'package:tobeto_app/widget/home_widget/applications.dart';
@@ -23,6 +28,29 @@ class _HomeScreenState extends State<HomeScreen> {
     "Anketlerim": false,
   };
 
+  String? _userName; //Kullanıcı adını saklamak için bir değişken
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUser();
+  }
+
+  void _getCurrentUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Firestore'dan kullanıcı adını al
+      var userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      setState(() {
+        _userName =
+            userData.data()?['username'] ?? user.displayName ?? 'Kullanıcı Adı';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -43,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Theme.of(context).primaryColor),
                     children: <TextSpan>[
                       TextSpan(
-                        text: "'ya hoş geldin Kullanıcı Adı",
+                        text: "'ya hoş geldin \n$_userName",
                         style: Theme.of(context)
                             .textTheme
                             .headlineMedium!
@@ -197,6 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         onSecondaryPressed: () {
                           // 'Başla' butonuna basıldığında yapılacak işlem
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => ProfileInformation()),
+                          );
                         },
                         gradientColors: [
                           Theme.of(context).primaryColor,
@@ -211,6 +243,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         onSecondaryPressed: () {
                           // 'Başla' butonuna basıldığında yapılacak işlem
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    Reviews(showAppBar: true)),
+                          );
                         },
                         gradientColors: [
                           Theme.of(context).primaryColorLight,
@@ -225,6 +263,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         onSecondaryPressed: () {
                           // 'Başla' butonuna basıldığında yapılacak işlem
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    Catalog(showAppBar: true)),
+                          );
                         },
                         gradientColors: [
                           Theme.of(context).colorScheme.onPrimary,
@@ -244,7 +288,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMenuButtonsSection() {
-    
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -271,7 +314,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Applications(),
                 Colors.lightBlue.shade200, // Pastel mavi renk
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.01), // Butonlar arası boşluk
+              SizedBox(
+                  height: MediaQuery.of(context).size.height *
+                      0.01), // Butonlar arası boşluk
               _buildMenuButton(
                 context,
                 'Eğitimlerim',
@@ -280,7 +325,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01), // Dikey boşluk
+          SizedBox(
+              height:
+                  MediaQuery.of(context).size.height * 0.01), // Dikey boşluk
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -290,7 +337,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Announcementandnews(),
                 Colors.pink.shade200, // Pastel pembe renk
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.01), // Butonlar arası boşluk
+              SizedBox(
+                  height: MediaQuery.of(context).size.height *
+                      0.01), // Butonlar arası boşluk
               _buildMenuButton(
                 context,
                 'Anketlerim',
@@ -304,7 +353,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildMenuButton(BuildContext context, String title, Widget page, Color bgColor) {
+  Widget _buildMenuButton(
+      BuildContext context, String title, Widget page, Color bgColor) {
     double width = MediaQuery.of(context).size.width / 2.15 - 10;
     double height = width / 1.75;
 

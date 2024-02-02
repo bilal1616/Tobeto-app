@@ -26,30 +26,27 @@ class _EducationPageState extends State<EducationPage> {
           subtitle: '21 Eylül 2023 15:20',
           buttonText: 'Eğitime Git',
           imageUrl: 'assets/ecmal.jpg',
-          videoPath: 'videos/26AralıkSalı-BloCPatternDersi.mp4'),
+          videoPath: 'videos/Flutter.mp4'),
       EducationCard(
         title: 'Eğitimlere Nasıl Katılırım?',
         subtitle: '8 Eylül 2023 17:06',
         buttonText: 'Eğitime Git',
         imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath:
-            'videos/26AralıkSalı-BloCPatternDersi.mp4', // Firebase Storage yolu
+        videoPath: 'videos/Firebase.mp4', // Firebase Storage yolu
       ),
       EducationCard(
         title: 'Herkes için Kodlama - 1A',
         subtitle: '18 Eylül 2023 03:00',
         buttonText: 'Eğitime Git',
         imageUrl: 'assets/tobetoarkapln.jpg',
-        videoPath:
-            'videos/26AralıkSalı-BloCPatternDersi.mp4', // Firebase Storage yolu
+        videoPath: 'videos/Flutter.mp4', // Firebase Storage yolu
       ),
       EducationCard(
         title: 'İstanbul Kodluyor Proje Aşamaları',
         subtitle: '31 Ağustos 2023 13:01',
         buttonText: 'Eğitime Git',
         imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath:
-            'videos/26AralıkSalı-BloCPatternDersi.mp4', // Firebase Storage yolu
+        videoPath: 'videos/Firebase.mp4', // Firebase Storage yolu
       ),
     ];
   }
@@ -63,46 +60,41 @@ class _EducationPageState extends State<EducationPage> {
           subtitle: '21 Eylül 2023 15:20',
           buttonText: 'Eğitime Git',
           imageUrl: 'assets/ecmal.jpg',
-          videoPath: 'videos/26AralıkSalı-BloCPatternDersi.mp4'),
+          videoPath: 'videos/Flutter.mp4'),
       EducationCard(
         title: 'Eğitimlere Nasıl Katılırım?',
         subtitle: '8 Eylül 2023 17:06',
         buttonText: 'Eğitime Git',
         imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath:
-            'videos/26AralıkSalı-BloCPatternDersi.mp4', // Firebase Storage yolu
+        videoPath: 'videos/Firebase.mp4', // Firebase Storage yolu
       ),
       EducationCard(
         title: 'Herkes için Kodlama - 1A',
         subtitle: '18 Eylül 2023 03:00',
         buttonText: 'Eğitime Git',
         imageUrl: 'assets/tobetoarkapln.jpg',
-        videoPath:
-            'videos/26AralıkSalı-BloCPatternDersi.mp4', // Firebase Storage yolu
+        videoPath: 'videos/Flutter.mp4', // Firebase Storage yolu
       ),
       EducationCard(
         title: 'İstanbul Kodluyor Proje Aşamaları',
         subtitle: '31 Ağustos 2023 13:01',
         buttonText: 'Eğitime Git',
         imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath:
-            'videos/26AralıkSalı-BloCPatternDersi.mp4', // Firebase Storage yolu
+        videoPath: 'videos/Firebase.mp4', // Firebase Storage yolu
       ),
       EducationCard(
         title: 'İstanbul Kodluyor Proje Aşamaları',
         subtitle: '31 Ağustos 2023 13:01',
         buttonText: 'Eğitime Git',
         imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath:
-            'videos/26AralıkSalı-BloCPatternDersi.mp4', // Firebase Storage yolu
+        videoPath: 'videos/Flutter.mp4', // Firebase Storage yolu
       ),
       EducationCard(
         title: 'İstanbul Kodluyor Proje Aşamaları',
         subtitle: '31 Ağustos 2023 13:01',
         buttonText: 'Eğitime Git',
         imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath:
-            'videos/26AralıkSalı-BloCPatternDersi.mp4', // Firebase Storage yolu
+        videoPath: 'videos/Flutter.mp4', // Firebase Storage yolu
       ),
     ];
   }
@@ -173,7 +165,8 @@ class EducationCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => VideoApp(videoPath: videoPath),
+            builder: (context) => VideoApp(
+                videoPath: videoPath, title: title, subtitle: subtitle),
           ),
         );
       },
@@ -231,8 +224,10 @@ class EducationCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                VideoApp(videoPath: videoPath),
+                            builder: (context) => VideoApp(
+                                videoPath: videoPath,
+                                title: title,
+                                subtitle: subtitle),
                           ),
                         );
                       },

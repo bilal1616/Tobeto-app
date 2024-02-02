@@ -31,9 +31,11 @@ class _ProfileInformationState extends State<ProfileInformation> {
       });
     }
   }
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -55,13 +57,13 @@ class _ProfileInformationState extends State<ProfileInformation> {
   TextEditingController _newPasswordAgainController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
 
-CustomCity? selectedCity1;
-CustomCity? selectedCity2;
-DateTime? _selectedDate;
-String? selectedEducation;
- 
-Skill? selectedSkill;
-SocialMedia? selectedMedia;
+  CustomCity? selectedCity1;
+  CustomCity? selectedCity2;
+  DateTime? _selectedDate;
+  String? selectedEducation;
+
+  Skill? selectedSkill;
+  SocialMedia? selectedMedia;
 
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -77,7 +79,6 @@ SocialMedia? selectedMedia;
               Tab(
                 icon: Icon(Icons.work_outline),
               ),
-              
               Tab(
                 icon: Icon(Icons.view_agenda),
               ),
@@ -135,7 +136,7 @@ SocialMedia? selectedMedia;
               helperText: "Soyadınız",
               hintText: 'Soyadınızı girin',
             ),
-             CompCustomTextField(
+            CompCustomTextField(
               obscureText: false,
               controller: _phoneController,
               helperText: 'Telefon Numaranız',
@@ -170,36 +171,36 @@ SocialMedia? selectedMedia;
                 });
               },
             ),
-             Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-              ),
-              onPressed: () {}, 
-              child: Text(
-                "Kaydet",
-                style: TextStyle(color: Colors.white),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    "Kaydet",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
           ],
         ),
       ),
     );
   }
-Widget _buildDateTextField() {
-  TextEditingController DateController = TextEditingController();
-  return DatePickerTextField(
-    controller: DateController,
-    labelText: 'Doğum Tarihiniz',
-    onDateSelected: (DateTime selectedDate) {
-    },
-  );
-}
+
+  Widget _buildDateTextField() {
+    TextEditingController DateController = TextEditingController();
+    return DatePickerTextField(
+      controller: DateController,
+      labelText: 'Doğum Tarihiniz',
+      onDateSelected: (DateTime selectedDate) {},
+    );
+  }
 
   Widget _buildImage() {
     return Stack(
@@ -229,9 +230,8 @@ Widget _buildDateTextField() {
     );
   }
 
-
   Widget _buildWorkTab() {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.all(15.0),
       child: SingleChildScrollView(
         child: Column(
@@ -255,9 +255,9 @@ Widget _buildDateTextField() {
               helperText: "Sektör",
               hintText: 'Yazılım',
             ),
-                _buildStartDateTextField(),
-                _buildEndDateTextField(),
-          CustomCityDropdown(
+            _buildStartDateTextField(),
+            _buildEndDateTextField(),
+            CustomCityDropdown(
               labelText: 'Şehir',
               selectedCity: selectedCity2,
               options: allCities,
@@ -274,67 +274,63 @@ Widget _buildDateTextField() {
               hintText: '',
             ),
             Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-              ),
-              onPressed: () {}, 
-              child: Text(
-                "Kaydet",
-                style: TextStyle(color: Colors.white),
+              padding: const EdgeInsets.all(15.0),
+              child: Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    "Kaydet",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildStartDateTextField() {
+    TextEditingController startDateController = TextEditingController();
+    return DatePickerTextField(
+      controller: startDateController,
+      labelText: 'İş Başlangıcı',
+      onDateSelected: (DateTime selectedDate) {},
+    );
+  }
 
-Widget _buildStartDateTextField() {
-  TextEditingController startDateController = TextEditingController();
-  return DatePickerTextField(
-    controller: startDateController,
-    labelText: 'İş Başlangıcı',
-    onDateSelected: (DateTime selectedDate) {
-    },
-  );
-}
+  Widget _buildEndDateTextField() {
+    TextEditingController endDateController = TextEditingController();
+    return DatePickerTextField(
+      controller: endDateController,
+      labelText: 'İş Bitişi',
+      onDateSelected: (DateTime selectedDate) {},
+    );
+  }
 
+  Widget _buildEducationStartDateTextField() {
+    TextEditingController startEducationDateController =
+        TextEditingController();
+    return DatePickerTextField(
+      controller: startEducationDateController,
+      labelText: 'Başlangıç Tarihi',
+      onDateSelected: (DateTime selectedDate) {},
+    );
+  }
 
-Widget _buildEndDateTextField() {
-  TextEditingController endDateController = TextEditingController();
-  return DatePickerTextField(
-    controller: endDateController,
-    labelText: 'İş Bitişi',
-    onDateSelected: (DateTime selectedDate) {
-    },
-  );
-}
-
-Widget _buildEducationStartDateTextField() {
-  TextEditingController startEducationDateController = TextEditingController();
-  return DatePickerTextField(
-    controller: startEducationDateController,
-    labelText: 'Başlangıç Tarihi',
-    onDateSelected: (DateTime selectedDate) {
-    },
-  );
-}
-Widget _buildGradudateDateTextField() {
-  TextEditingController graduateDateController = TextEditingController();
-  return DatePickerTextField(
-    controller: graduateDateController,
-    labelText: 'Mezuniyet Tarihi',
-    onDateSelected: (DateTime selectedDate) {
-    },
-  );
-}
+  Widget _buildGradudateDateTextField() {
+    TextEditingController graduateDateController = TextEditingController();
+    return DatePickerTextField(
+      controller: graduateDateController,
+      labelText: 'Mezuniyet Tarihi',
+      onDateSelected: (DateTime selectedDate) {},
+    );
+  }
 
   Widget _buildEducationTab() {
     return Padding(
@@ -355,7 +351,7 @@ Widget _buildGradudateDateTextField() {
               helperText: "Bölüm",
               hintText: 'Yazılım',
             ),
-               CustomEducationDropdown(
+            CustomEducationDropdown(
               labelText: 'Eğitim Durumu',
               selectedValue: selectedEducation,
               options: ['Lisans', 'Ön Lisans', 'Yüksek Lisans', 'Doktora'],
@@ -366,30 +362,30 @@ Widget _buildGradudateDateTextField() {
               },
             ),
             _buildEducationStartDateTextField(),
-             _buildGradudateDateTextField(),
-              Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-              ),
-              onPressed: () {}, 
-              child: Text(
-                "Kaydet",
-                style: TextStyle(color: Colors.white),
+            _buildGradudateDateTextField(),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    "Kaydet",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
           ],
         ),
       ),
     );
   }
 
- Widget _buildSkills() {
+  Widget _buildSkills() {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Column(
@@ -405,35 +401,36 @@ Widget _buildGradudateDateTextField() {
             },
           ),
           Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-              ),
-              onPressed: () {}, 
-              child: Text(
-                "Kaydet",
-                style: TextStyle(color: Colors.white),
+            padding: const EdgeInsets.all(15.0),
+            child: Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                ),
+                onPressed: () {},
+                child: Text(
+                  "Kaydet",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
-        ),
         ],
       ),
     );
   }
 
-Widget _buildCertificates(){
-  return Padding(
-    padding: const EdgeInsets.all(20.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+  Widget _buildCertificates() {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('Sertifikalarım',
-          style: TextStyle(fontWeight: FontWeight.bold,
-          fontSize: 20),),
+          Text(
+            'Sertifikalarım',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
           SizedBox(height: 10),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -441,9 +438,9 @@ Widget _buildCertificates(){
             ),
             onPressed: _pickFile,
             child: Text("Dosya Seç",
-            style: TextStyle(
-              color: Colors.white,
-            )),
+                style: TextStyle(
+                  color: Colors.white,
+                )),
           ),
           SizedBox(height: 20),
           _selectedFile != null
@@ -451,157 +448,155 @@ Widget _buildCertificates(){
               : Text("Henüz dosya seçilmedi."),
         ],
       ),
-  );
-}
+    );
+  }
 
-
-Widget _buildSocialMedia(){
-  return Padding(
-    padding: const EdgeInsets.all(15.0),
-    child: Column(
-      children: [
-        CustomSocialMediaDropdown(
-        labelText: 'Sosyal Medya Seçiniz',
-        selectedSocialMedia: selectedMedia,
-        options: socialMediaOptions,
-        onChanged: (SocialMedia? value) {
-          setState(() {
-            selectedMedia = value;
-          });
-        },
-        ),
-         CompCustomTextField(
-              obscureText: false,
-              controller: _socialMediaController,
-              helperText: '',
-              hintText: 'https://',
-            ),
-            Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-              ),
-              onPressed: () {}, 
-              child: Text(
-                "Kaydet",
-                style: TextStyle(color: Colors.white),
+  Widget _buildSocialMedia() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        children: [
+          CustomSocialMediaDropdown(
+            labelText: 'Sosyal Medya Seçiniz',
+            selectedSocialMedia: selectedMedia,
+            options: socialMediaOptions,
+            onChanged: (SocialMedia? value) {
+              setState(() {
+                selectedMedia = value;
+              });
+            },
+          ),
+          CompCustomTextField(
+            obscureText: false,
+            controller: _socialMediaController,
+            helperText: '',
+            hintText: 'https://',
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                ),
+                onPressed: () {},
+                child: Text(
+                  "Kaydet",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-Widget _buildSettings() {
-  return Padding(
-    padding: const EdgeInsets.all(15.0),
-    child: Column(
-      children: [
-        CompCustomTextField(
-          obscureText: false,
-          controller: _oldPasswordController,
-          helperText: 'Eski Şifre',
-          hintText: 'Eski Şifre',
-        ),
-        CompCustomTextField(
-          obscureText: false,
-          controller: _newPasswordController,
-          helperText: 'Yeni Şifre',
-          hintText: 'Yeni Şifre',
-        ),
-        CompCustomTextField(
-          obscureText: false,
-          controller: _newPasswordAgainController,
-          helperText: 'Yeni Şifre Tekrar',
-          hintText: 'Yeni Şifre Tekrar',
-        ),
-        Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-              ),
-              onPressed: () {}, 
-              child: Text(
-                "Kaydet",
-                style: TextStyle(color: Colors.white),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettings() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        children: [
+          CompCustomTextField(
+            obscureText: false,
+            controller: _oldPasswordController,
+            helperText: 'Eski Şifre',
+            hintText: 'Eski Şifre',
+          ),
+          CompCustomTextField(
+            obscureText: false,
+            controller: _newPasswordController,
+            helperText: 'Yeni Şifre',
+            hintText: 'Yeni Şifre',
+          ),
+          CompCustomTextField(
+            obscureText: false,
+            controller: _newPasswordAgainController,
+            helperText: 'Yeni Şifre Tekrar',
+            hintText: 'Yeni Şifre Tekrar',
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                ),
+                onPressed: () {},
+                child: Text(
+                  "Kaydet",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(width: 8), 
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal:15.0),
-          child: Container(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
-              onPressed: () {}, 
-              child: Text(
-                "Üyeliği Sonlandır",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
- Widget _buildLanguage(){
-  return Padding(
-    padding: const EdgeInsets.all(15.0),
-    child: Column(
-      children: [
-        CustomLanguageDropdown(
-                labelText: 'Yabancı Dil Seçin',
-                selectedLanguage: selectedLanguage,
-                options: languages,
-                onChanged: (Language? language) {
-                  setState(() {
-                    selectedLanguage = language;
-                  });
-                },
-              ),
-              CustomLanguageLevelDropdown(
-          labelText: 'Seviye Seçin',
-          selectedLevel: selectedLevel,
-          options: languageLevels,
-          onChanged: (LanguageLevel? level) {
-            setState(() {
-              selectedLevel = level;
-            });
-          },
-        ),
-         Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-              ),
-              onPressed: () {}, 
-              child: Text(
-                "Kaydet",
-                style: TextStyle(color: Colors.white),
+          SizedBox(width: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                onPressed: () {},
+                child: Text(
+                  "Üyeliği Sonlandır",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
- }
+        ],
+      ),
+    );
+  }
 
+  Widget _buildLanguage() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        children: [
+          CustomLanguageDropdown(
+            labelText: 'Yabancı Dil Seçin',
+            selectedLanguage: selectedLanguage,
+            options: languages,
+            onChanged: (Language? language) {
+              setState(() {
+                selectedLanguage = language;
+              });
+            },
+          ),
+          CustomLanguageLevelDropdown(
+            labelText: 'Seviye Seçin',
+            selectedLevel: selectedLevel,
+            options: languageLevels,
+            onChanged: (LanguageLevel? level) {
+              setState(() {
+                selectedLevel = level;
+              });
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                ),
+                onPressed: () {},
+                child: Text(
+                  "Kaydet",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
-
