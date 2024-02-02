@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tobeto_app/widget/home_widget/education_video.dart';
+import 'education_video.dart'; // Video sayfası için gerekli
 
 class EducationPage extends StatefulWidget {
   const EducationPage({Key? key}) : super(key: key);
@@ -9,110 +11,10 @@ class EducationPage extends StatefulWidget {
 }
 
 class _EducationPageState extends State<EducationPage> {
-  late List<EducationCard> _educationCards;
-  bool _isExpanded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _educationCards = _getInitialCards();
-  }
-
-  List<EducationCard> _getInitialCards() {
-    return [
-      // Başlangıçta gösterilecek kartlar
-      EducationCard(
-          title: 'Dr. Ecmel Ayral\'dan Hoşgeldin Mesajı',
-          subtitle: '21 Eylül 2023 15:20',
-          buttonText: 'Eğitime Git',
-          imageUrl: 'assets/ecmal.jpg',
-          videoPath: 'videos/Flutter.mp4'),
-      EducationCard(
-        title: 'Eğitimlere Nasıl Katılırım?',
-        subtitle: '8 Eylül 2023 17:06',
-        buttonText: 'Eğitime Git',
-        imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath: 'videos/Firebase.mp4', // Firebase Storage yolu
-      ),
-      EducationCard(
-        title: 'Herkes için Kodlama - 1A',
-        subtitle: '18 Eylül 2023 03:00',
-        buttonText: 'Eğitime Git',
-        imageUrl: 'assets/tobetoarkapln.jpg',
-        videoPath: 'videos/Flutter.mp4', // Firebase Storage yolu
-      ),
-      EducationCard(
-        title: 'İstanbul Kodluyor Proje Aşamaları',
-        subtitle: '31 Ağustos 2023 13:01',
-        buttonText: 'Eğitime Git',
-        imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath: 'videos/Firebase.mp4', // Firebase Storage yolu
-      ),
-    ];
-  }
-
-  List<EducationCard> _getAllCards() {
-    return [
-      // Tüm kartlar
-      // İlk kartlar tekrar listelenmeli ve sonrasında yeni kartlar eklenmeli
-      EducationCard(
-          title: 'Dr. Ecmel Ayral\'dan Hoşgeldin Mesajı',
-          subtitle: '21 Eylül 2023 15:20',
-          buttonText: 'Eğitime Git',
-          imageUrl: 'assets/ecmal.jpg',
-          videoPath: 'videos/Flutter.mp4'),
-      EducationCard(
-        title: 'Eğitimlere Nasıl Katılırım?',
-        subtitle: '8 Eylül 2023 17:06',
-        buttonText: 'Eğitime Git',
-        imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath: 'videos/Firebase.mp4', // Firebase Storage yolu
-      ),
-      EducationCard(
-        title: 'Herkes için Kodlama - 1A',
-        subtitle: '18 Eylül 2023 03:00',
-        buttonText: 'Eğitime Git',
-        imageUrl: 'assets/tobetoarkapln.jpg',
-        videoPath: 'videos/Flutter.mp4', // Firebase Storage yolu
-      ),
-      EducationCard(
-        title: 'İstanbul Kodluyor Proje Aşamaları',
-        subtitle: '31 Ağustos 2023 13:01',
-        buttonText: 'Eğitime Git',
-        imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath: 'videos/Firebase.mp4', // Firebase Storage yolu
-      ),
-      EducationCard(
-        title: 'İstanbul Kodluyor Proje Aşamaları',
-        subtitle: '31 Ağustos 2023 13:01',
-        buttonText: 'Eğitime Git',
-        imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath: 'videos/Flutter.mp4', // Firebase Storage yolu
-      ),
-      EducationCard(
-        title: 'İstanbul Kodluyor Proje Aşamaları',
-        subtitle: '31 Ağustos 2023 13:01',
-        buttonText: 'Eğitime Git',
-        imageUrl: 'assets/ıstanbulkodlyr.jpg',
-        videoPath: 'videos/Flutter.mp4', // Firebase Storage yolu
-      ),
-    ];
-  }
-
-  void _toggleCardDisplay() {
-    setState(() {
-      if (_isExpanded) {
-        _educationCards = _getInitialCards();
-        _isExpanded = false;
-      } else {
-        _educationCards = _getAllCards();
-        _isExpanded = true;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final userId = FirebaseAuth.instance.currentUser?.uid; // Kullanıcı ID'si
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Eğitimlerim'),
@@ -121,23 +23,34 @@ class _EducationPageState extends State<EducationPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            ..._educationCards,
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-            ElevatedButton.icon(
-              onPressed: _toggleCardDisplay,
-              icon:
-                  Icon(_isExpanded ? Icons.arrow_upward : Icons.arrow_downward),
-              label: Text(_isExpanded ? 'Daha Az Göster' : 'Daha Fazla Göster'),
-              style: ElevatedButton.styleFrom(
-                  minimumSize: Size(42, 42), backgroundColor: Colors.black38),
+      body: userId == null
+          ? Center(child: Text("Kullanıcı girişi yapılmamış."))
+          : StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userId)
+                  .collection('videos')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData) return Text("Veri yok");
+
+                final videos = snapshot.data!.docs;
+                return ListView(
+                  children: videos.map((doc) {
+                    return EducationCard(
+                      title: doc['title'],
+                      subtitle: doc['subtitle'],
+                      buttonText: 'Eğitime Git',
+                      imageUrl: doc['imageUrl'], // Resim URL'si
+                      videoURL: doc['videoURL'], // Video URL'si
+                    );
+                  }).toList(),
+                );
+              },
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -147,7 +60,7 @@ class EducationCard extends StatelessWidget {
   final String subtitle;
   final String buttonText;
   final String imageUrl;
-  final String videoPath;
+  final String videoURL;
 
   const EducationCard({
     Key? key,
@@ -155,7 +68,7 @@ class EducationCard extends StatelessWidget {
     required this.subtitle,
     required this.buttonText,
     required this.imageUrl,
-    required this.videoPath,
+    required this.videoURL,
   }) : super(key: key);
 
   @override
@@ -165,82 +78,67 @@ class EducationCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => VideoApp(
-                videoPath: videoPath, title: title, subtitle: subtitle),
+            builder: (context) =>
+                VideoApp(videoURL: videoURL, title: title, subtitle: subtitle),
           ),
         );
       },
-      child: Container(
-        width: double.infinity, // Genişliği ekrana uydur
-        margin: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
+      child: Card(
+        margin: EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
+        elevation: 5,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start, // Sol başa hizalama
           children: [
-            Container(
-              height: 200, // Sabit yükseklik
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                image: DecorationImage(
-                  image: AssetImage(imageUrl),
-                  fit: BoxFit.cover,
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+              child: Image.network(
+                imageUrl,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // İçerikleri sol başa hizala
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 14),
-                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground),
                   ),
                   SizedBox(height: 8),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => VideoApp(
-                                videoPath: videoPath,
-                                title: title,
-                                subtitle: subtitle),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        buttonText,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoApp(
+                              videoURL: videoURL,
+                              title: title,
+                              subtitle: subtitle),
                         ),
+                      );
+                    },
+                    child: Text(buttonText),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primary, // Buton rengi
+                      minimumSize: Size(double.infinity, 38), // Buton boyutu
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: Size(double.infinity, 36),
-                          backgroundColor: Colors.grey),
                     ),
                   ),
                 ],
