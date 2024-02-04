@@ -334,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildMenuButton(
                 context,
                 'Duyuru ve Haberlerim',
-                Announcementandnews(),
+                AnnouncementAndNews(),
                 Colors.pink.shade200, // Pastel pembe renk
               ),
               SizedBox(
