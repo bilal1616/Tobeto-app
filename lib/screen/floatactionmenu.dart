@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FloatingActionMenuButton extends StatefulWidget {
   const FloatingActionMenuButton({Key? key}) : super(key: key);
@@ -52,12 +53,16 @@ class _FloatingActionMenuButtonState extends State<FloatingActionMenuButton>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              _buildFloatingButton(FontAwesomeIcons.facebookF, Colors.blue),
+              _buildFloatingButton(FontAwesomeIcons.facebookF, Colors.blue,
+                  "https://m.facebook.com/tobetoplatform?refid=13&__tn__=%2Cg"),
               _buildFloatingButton(
-                  FontAwesomeIcons.linkedinIn, Colors.blue[700]!),
-              _buildFloatingButton(FontAwesomeIcons.instagram, Colors.pink),
-              _buildFloatingButton(
-                  FontAwesomeIcons.whatsapp, Colors.green[500]!),
+                  FontAwesomeIcons.linkedinIn,
+                  Colors.blue[700]!,
+                  "https://www.linkedin.com/company/tobeto/?originalSubdomain=tr"),
+              _buildFloatingButton(FontAwesomeIcons.instagram, Colors.pink,
+                  "https://www.instagram.com/tobeto_official/"),
+              _buildFloatingButton(FontAwesomeIcons.whatsapp,
+                  Colors.green[500]!, "https://whatsapp.com"),
             ],
           ),
         ),
@@ -65,16 +70,18 @@ class _FloatingActionMenuButtonState extends State<FloatingActionMenuButton>
     );
   }
 
-  Widget _buildFloatingButton(IconData icon, Color color) {
-    var theme = Theme.of(context);
+  Widget _buildFloatingButton(IconData icon, Color color, String url) {
     return FloatingActionButton(
       mini: true,
-      backgroundColor: theme.brightness == Brightness.dark
-          ? Theme.of(context).iconTheme.color
-          : Theme.of(context).colorScheme.background,
-      child: Icon(icon, color: color),
-      onPressed: () {
-        _toggleMenu();
+      backgroundColor: color,
+      child: Icon(icon, color: Colors.white),
+      onPressed: () async {
+        Uri uri = Uri.parse(url);
+        if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not launch $url')),
+          );
+        }
       },
     );
   }

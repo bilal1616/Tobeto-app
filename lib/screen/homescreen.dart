@@ -212,6 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+
                 ExamCard(), // ExamCard'ı burada kullanıyoruz
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 SingleChildScrollView(
