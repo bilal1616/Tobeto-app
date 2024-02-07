@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     String imagePath =
         isDarkMode ? "assets/tobeto-logo-dark.png" : "assets/tobeto-logo.png";
-    String imagePath1 = isDarkMode ? "assets/dark1.jpg" : "assets/ligth1.jpg";
+    String imagePath1 = isDarkMode ? "assets/siyah.png" : "assets/beyaz.png";
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(

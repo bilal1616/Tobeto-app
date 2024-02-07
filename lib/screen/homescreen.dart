@@ -371,7 +371,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Text(
           title,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12.1, fontWeight: FontWeight.bold),
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall
+              ?.copyWith(color: Theme.of(context).colorScheme.background),
         ),
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(

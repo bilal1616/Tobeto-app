@@ -101,15 +101,17 @@ class _ExamCardState extends State<ExamCard> {
                   Expanded(
                     child: Text(
                       exam['title'],
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 12,
+                      maxLines: 6,
                     ),
                   ),
+                  SizedBox(height: 10),
                   Text(
                     exam['subtitle'],
-                    style: TextStyle(fontSize: 15),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 6,
                   ),
@@ -122,9 +124,15 @@ class _ExamCardState extends State<ExamCard> {
                         color: Colors.purple,
                       ),
                       SizedBox(width: 5),
-                      Text(exam['duration'],
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      Text(
+                        exam['duration'],
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onBackground),
+                      ),
                     ],
                   ),
                 ],
@@ -164,14 +172,16 @@ class _ExamCardState extends State<ExamCard> {
               children: [
                 Text(
                   exam['title'],
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
                 ),
                 SizedBox(height: 20),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Text(
                       exam['content'],
-                      style: TextStyle(fontSize: 18),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
                     ),
                   ),
                 ),

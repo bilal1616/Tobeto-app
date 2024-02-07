@@ -53,7 +53,7 @@ class _AnnouncementAndNewsState extends State<AnnouncementAndNews> {
                 Text(
                   announcement['title'],
                   textAlign: TextAlign.center, // Başlığı merkeze alır.
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onBackground),
                 ),
                 SizedBox(
@@ -61,9 +61,8 @@ class _AnnouncementAndNewsState extends State<AnnouncementAndNews> {
                 Text(
                   announcement['content'],
                   textAlign: TextAlign.center, // İçeriği merkeze alır.
-                  style: TextStyle(
-                    fontSize: 20, // İçerik fontu büyütüldü.
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
                 ),
               ],
             ),
@@ -77,7 +76,7 @@ class _AnnouncementAndNewsState extends State<AnnouncementAndNews> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Duyuru ve Haberler'),
+        title: Text('Duyuru ve Haberlerim'),
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop()),
@@ -131,16 +130,34 @@ class _AnnouncementAndNewsState extends State<AnnouncementAndNews> {
                                 ]),
                             SizedBox(height: 15),
                             Text(announcement['title'],
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground)),
                             SizedBox(height: 18),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(children: [
-                                  Icon(Icons.calendar_today, size: 20),
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
                                   SizedBox(width: 8),
-                                  Text(formattedDate)
+                                  Text(
+                                    formattedDate,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
+                                  )
                                 ]),
                                 Expanded(
                                     child: Align(
