@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+
+void main() => runApp(MaterialApp(
+      home: VideoApp(
+        videoURL:
+            'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+        title: 'Video Başlığı',
+        subtitle: 'Video Alt Başlığı',
+      ),
+    ));
 
 class VideoApp extends StatefulWidget {
   final String videoURL;
@@ -19,6 +29,7 @@ class VideoApp extends StatefulWidget {
 
 class _VideoAppState extends State<VideoApp> {
   late VideoPlayerController _controller;
+  bool _isControlVisible = false;
   bool _isMuted = false;
 
   @override
@@ -29,86 +40,79 @@ class _VideoAppState extends State<VideoApp> {
         setState(() {});
       });
     _controller.setLooping(true);
+    // _controller.play(); // Bu satır kaldırıldı, böylece video otomatik olarak başlamayacak.
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      appBar: AppBar(title: Text(widget.title)),
+      body: GestureDetector(
+        onTap: () => setState(() => _isControlVisible = !_isControlVisible),
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
             _controller.value.isInitialized
                 ? AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
                     child: VideoPlayer(_controller),
                   )
-                : Container(
-                    height: 200,
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: VideoProgressIndicator(_controller, allowScrubbing: true),
+                : Center(child: CircularProgressIndicator()),
+            _isControlVisible ? _videoControls(context) : SizedBox.shrink(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _videoControls(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: _isControlVisible ? 1.0 : 0.0,
+      duration: Duration(milliseconds: 300),
+      child: Container(
+        color: Colors.black45,
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: Icon(Icons.replay_10),
+              color: Colors.white,
+              onPressed: () => _controller
+                  .seekTo(_controller.value.position - Duration(seconds: 10)),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                IconButton(
-                  icon: Icon(_controller.value.isPlaying
-                      ? Icons.pause
-                      : Icons.play_arrow),
-                  onPressed: () {
-                    setState(() {
-                      _controller.value.isPlaying
-                          ? _controller.pause()
-                          : _controller.play();
-                    });
-                  },
-                ),
-                IconButton(
-                  icon: Icon(_isMuted ? Icons.volume_off : Icons.volume_up),
-                  onPressed: () {
-                    setState(() {
-                      _isMuted = !_isMuted;
-                      _controller.setVolume(_isMuted ? 0 : 1);
-                    });
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.fullscreen),
-                  onPressed: () {
-                    _toggleFullScreen(context);
-                  },
-                ),
-                Spacer(),
-                IconButton(
-                  icon: Icon(Icons.favorite_border),
-                  onPressed: () {
-                    // Favori işlemi
-                  },
-                ),
-              ],
+            IconButton(
+              icon: Icon(
+                  _controller.value.isPlaying ? Icons.pause : Icons.play_arrow),
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  _controller.value.isPlaying
+                      ? _controller.pause()
+                      : _controller.play();
+                });
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.title,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
-                  Text(widget.subtitle, style: TextStyle(fontSize: 16)),
-                ],
-              ),
+            IconButton(
+              icon: Icon(_isMuted ? Icons.volume_off : Icons.volume_up),
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  _isMuted = !_isMuted;
+                  _controller.setVolume(_isMuted ? 0 : 1);
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.forward_10),
+              color: Colors.white,
+              onPressed: () => _controller
+                  .seekTo(_controller.value.position + Duration(seconds: 10)),
+            ),
+            IconButton(
+              icon: Icon(Icons.fullscreen),
+              color: Colors.white,
+              onPressed: _toggleFullScreen,
             ),
           ],
         ),
@@ -116,29 +120,19 @@ class _VideoAppState extends State<VideoApp> {
     );
   }
 
-  void _toggleFullScreen(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          body: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
-                    child: VideoPlayer(_controller),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.fullscreen_exit),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  void _toggleFullScreen() {
+    setState(() {
+      if (MediaQuery.of(context).orientation == Orientation.landscape) {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      } else {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.landscapeLeft,
+        ]);
+      }
+    });
   }
 
   @override
