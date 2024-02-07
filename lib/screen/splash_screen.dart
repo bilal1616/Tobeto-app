@@ -1,0 +1,62 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:tobeto_app/screen/drawermainscreen.dart';
+import 'package:tobeto_app/screen/loginscreen.dart';
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  void _navigateToNextScreen() {
+    FirebaseAuth.instance.authStateChanges().first.then((user) {
+      if (user != null) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const DrawerMainScreen()));
+      } else {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LoginScreen()));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/splashscreen.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.3,
+            left: 0,
+            right: 0,
+            top: 75,
+            child: Center(
+              child: ElevatedButton(
+                onPressed: _navigateToNextScreen,
+                child: Text(
+                  "Hadi Başlayalım",
+                  style: TextStyle(fontSize: 16),
+                ),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

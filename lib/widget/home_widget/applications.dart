@@ -148,8 +148,13 @@ class _ApplicationsState extends State<Applications> {
                       Flexible(
                         child: Text(
                           title,
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2, // Başlık 2 satıra kadar uzayabilir
                         ),
@@ -176,7 +181,13 @@ class _ApplicationsState extends State<Applications> {
                       Expanded(
                         child: Text(
                           subtitle,
-                          style: TextStyle(fontSize: 14),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground),
                         ),
                       ),
                     ],
@@ -189,7 +200,13 @@ class _ApplicationsState extends State<Applications> {
                       Expanded(
                         child: Text(
                           subtitle1,
-                          style: TextStyle(fontSize: 12),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground),
                         ),
                       ),
                     ],

@@ -14,7 +14,6 @@ class Surveys extends StatelessWidget {
       body: ListView(
         children: [
           _buildSurveyCard(context),
-          _buildSurveyCard(context),
           // Daha fazla card eklenebilir
         ],
       ),
@@ -28,7 +27,7 @@ class Surveys extends StatelessWidget {
       elevation: 4,
       child: Container(
         width: 350,
-        height: 275,
+        height: 450,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(15),
@@ -39,13 +38,12 @@ class Surveys extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
               child: Image.asset(
-                "assets/anket.png",
-                width: 150,
-                height: 150,
-                fit: BoxFit.cover,
+                "assets/anket1.jpg",
+                width: 350,
+                fit: BoxFit.fill,
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.only(left: 17),
               child: Text(

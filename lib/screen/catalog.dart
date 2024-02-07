@@ -5,8 +5,7 @@ import 'package:tobeto_app/widget/catalog_widget/catalog_widget.dart';
 import 'package:tobeto_app/widget/catalog_widget/filter_dialog.dart';
 
 class Catalog extends StatefulWidget {
-  final bool
-      showAppBar; // AppBar'ı gösterip göstermeme durumunu tutacak parametre
+  final bool showAppBar;
   const Catalog({Key? key, this.showAppBar = false}) : super(key: key);
 
   @override
@@ -26,84 +25,60 @@ class _CatalogState extends State<Catalog> {
     return Scaffold(
       appBar: widget.showAppBar
           ? AppBar(
-              // showAppBar true ise AppBar göster
-              title: Image.asset(
-                imagePath,
-                width: 120,
-                height: 60,
-              ),
+              title: Image.asset(imagePath, width: 120, height: 60),
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context),
               ),
             )
-          : null, // showAppBar false ise AppBar gösterme
+          : null,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Banner
-            Container(
-              decoration: BoxDecoration(
-                image: const DecorationImage(
-                  image: AssetImage('assets/banner.png'),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.start, // Bu satır güncellendi
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Yatay hizalama için eklendi
-                  children: [
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Öğrenmeye \nbaşla !",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 38.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Container(
+                  height: 275,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/banner.jpg'),
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: 30),
-                    TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        hintText: "Eğitim arayın...",
-                        hintStyle: const TextStyle(fontSize: 15),
-                        prefixIcon: const Icon(Icons.search),
-                        fillColor: Colors.white,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
+                  ),
                 ),
-              ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: "Eğitim arayın...",
+                      prefixIcon: Icon(Icons.search),
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50.0)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 14), // İçerik dolgusunu azalt
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-            // Filtrele Butonu
-            // Catalog sınıfına eklemek için
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                minimumSize: const Size(350, 35),
+                    borderRadius: BorderRadius.circular(20.0)),
+                minimumSize: const Size(350, 40),
               ),
               onPressed: () {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    // Filtreleme dialog'unu çağır
                     return FilterDialog();
                   },
                 );
@@ -117,15 +92,13 @@ class _CatalogState extends State<Catalog> {
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-            // CatalogModel Kartları
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemCount: catalogList.length,
               itemBuilder: (ctx, index) => Center(
                 child: Container(
-                  width: MediaQuery.of(context).size.width *
-                      0.9, // Genişliği ayarlandı
+                  width: MediaQuery.of(context).size.width * 0.9,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CatalogWidget(catalogModel: catalogList[index]),
@@ -134,7 +107,7 @@ class _CatalogState extends State<Catalog> {
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-            PaginationWidget(), // Sayfa geçiş butonlarını ekleyin
+            PaginationWidget(),
             SizedBox(height: MediaQuery.of(context).size.height * 0.075),
           ],
         ),

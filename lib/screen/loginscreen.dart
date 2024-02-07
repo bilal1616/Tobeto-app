@@ -76,25 +76,22 @@ class _LoginScreenState extends State<LoginScreen> {
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     String imagePath =
         isDarkMode ? "assets/tobeto-logo-dark.png" : "assets/tobeto-logo.png";
-    String imagePath1 = isDarkMode ? "assets/dark.png" : "assets/light.png";
+    String imagePath1 = isDarkMode ? "assets/dark1.jpg" : "assets/ligth1.jpg";
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(imagePath1),
-                fit: BoxFit.fill,
-              ),
+          Positioned.fill(
+            child: Image.asset(
+              imagePath1,
+              fit: BoxFit
+                  .cover, // Resmi tüm ekranı kaplayacak şekilde ölçeklendir
             ),
           ),
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.645,
+              height: MediaQuery.of(context).size.height * 0.625,
               decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(24)),
