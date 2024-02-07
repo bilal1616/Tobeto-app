@@ -53,10 +53,8 @@ class _AnnouncementAndNewsState extends State<AnnouncementAndNews> {
                 Text(
                   announcement['title'],
                   textAlign: TextAlign.center, // Başlığı merkeze alır.
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24, // Başlık fontu büyütüldü.
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
                 ),
                 SizedBox(
                     height: 16), // Başlık ve içerik arasında boşluk bırakır.
