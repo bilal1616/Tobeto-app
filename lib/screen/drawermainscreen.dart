@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tobeto_app/screen/calendar.dart';
 import 'package:tobeto_app/screen/catalog.dart';
 import 'package:tobeto_app/screen/floatactionmenu.dart';
@@ -17,14 +20,46 @@ class DrawerMainScreen extends StatefulWidget {
 
 class _DrawerMainScreenState extends State<DrawerMainScreen> {
   int _selectedPageIndex = 0;
+  String? _username;
 
   final List<Widget> _pages = [
     const HomeScreen(),
     const Reviews(),
     const ProfilePage(),
     const Catalog(),
-    const Calendar(),
+    const CalendarPage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  void _loadUsername() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Kullanıcının Firestore'daki bilgisini çek
+      final userDocSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      String? username;
+      // Firestore'da kayıtlı kullanıcı adı varsa kullan
+      if (userDocSnapshot.exists &&
+          userDocSnapshot.data()!.containsKey('username')) {
+        username = userDocSnapshot.data()!['username'];
+      } else {
+        // Firestore'da kullanıcı adı yoksa Google'dan alınan adı kullan
+        username = user.displayName;
+      }
+
+      setState(() {
+        _username = username ?? 'Kullanıcı Adı';
+      });
+    }
+  }
 
   void _selectPage(int index) {
     if (index < 5) {
@@ -52,7 +87,9 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Kullanıcı Adı'),
+              title: _username != null
+                  ? Text(_username!)
+                  : const Text("Kullanıcı Adı"),
               onTap: () => _showProfileMenu(ctx),
             ),
             ListTile(
@@ -88,11 +125,22 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Oturumu Kapat'),
-              onTap: () {
-                Navigator.pop(ctx); // İç menüyü kapat
+              onTap: () async {
+                Navigator.pop(context);
+
+                //Firebaseden çıkış yap
+                await FirebaseAuth.instance.signOut();
+
+                //Google ile giriş yapılmışsa googledan çıkış yap
+                final GoogleSignIn googleSignIn = GoogleSignIn();
+                if (await googleSignIn.isSignedIn()) {
+                  await googleSignIn.signOut();
+                }
+
+                //Login ekranına yönlendir
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (Route<dynamic> route) => false,
+                  (Route<dynamic> Route) => false,
                 );
               },
             ),

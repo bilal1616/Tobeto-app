@@ -1,110 +1,189 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class Announcementandnews extends StatefulWidget {
-  const Announcementandnews({Key? key}) : super(key: key);
-
+class AnnouncementAndNews extends StatefulWidget {
   @override
-  _AnnouncementandnewsState createState() => _AnnouncementandnewsState();
+  _AnnouncementAndNewsState createState() => _AnnouncementAndNewsState();
 }
 
-class _AnnouncementandnewsState extends State<Announcementandnews> {
-  @override
-  Widget build(BuildContext context) {
-    final announcements = [
-      {
-        'title': 'Yeni Grupların Discord\'a Katılımı',
-        'date': '07.12.2023',
-      },
-      {
-        'title': '4 Aralık Online Hoşgeldin Buluşması',
-        'date': '29.11.2023',
-      },
-      {
-        'title': 'Önemli Bilgilendirme',
-        'date': '23.11.2023',
-      },
-    ];
+class _AnnouncementAndNewsState extends State<AnnouncementAndNews> {
+  final String? userId = FirebaseAuth.instance.currentUser?.uid;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: announcements.map((announcement) => _buildAnnouncementCard(announcement, context)).toList(),
-      ),
+  Stream<List<Map<String, dynamic>>> fetchAnnouncements() async* {
+    if (userId == null) {
+      yield [];
+      return;
+    }
+    DocumentSnapshot<Map<String, dynamic>> userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    List<dynamic> announcementIds = userDoc.data()?['announcements'] ?? [];
+    List<Map<String, dynamic>> announcements = [];
+    for (var id in announcementIds) {
+      DocumentSnapshot<Map<String, dynamic>> announcementDoc =
+          await FirebaseFirestore.instance
+              .collection('announcements')
+              .doc(id)
+              .get();
+      if (announcementDoc.exists) {
+        Map<String, dynamic> announcement = announcementDoc.data()!;
+        announcements.add(announcement);
+      }
+    }
+    yield announcements;
+  }
+
+  void showAnnouncementDetails(
+      BuildContext context, Map<String, dynamic> announcement) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled:
+          true, // Modalın ekran boyutuna göre ayarlanmasını sağlar.
+      builder: (BuildContext bc) {
+        return FractionallySizedBox(
+          heightFactor: 0.7, // Modalın ekranın %70'ini kaplamasını sağlar.
+          child: Container(
+            padding: EdgeInsets.all(24), // İçerik padding'i artırıldı.
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // İçeriği merkeze alır.
+              children: <Widget>[
+                Text(
+                  announcement['title'],
+                  textAlign: TextAlign.center, // Başlığı merkeze alır.
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
+                SizedBox(
+                    height: 16), // Başlık ve içerik arasında boşluk bırakır.
+                Text(
+                  announcement['content'],
+                  textAlign: TextAlign.center, // İçeriği merkeze alır.
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildAnnouncementCard(Map<String, String> announcement, BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.80,
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          border: Border(
-            left: BorderSide(
-              color: Theme.of(context).colorScheme.secondary,
-              width: 8,
-            ),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    child: Text(
-                      'Duyuru',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.normal,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Duyuru ve Haberlerim'),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop()),
+      ),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: fetchAnnouncements(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text("Duyuru bulunamadı."));
+          }
+
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              final announcement = snapshot.data![index];
+              DateTime date = (announcement['date'] as Timestamp).toDate();
+              String formattedDate = DateFormat('dd.MM.yyyy').format(date);
+
+              return Card(
+                margin: EdgeInsets.all(10),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  children: [
+                    Container(
+                        width: 5,
+                        height: 155,
+                        decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                bottomLeft: Radius.circular(12)))),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(announcement['type'],
+                                      style: TextStyle(color: Colors.green)),
+                                  Text(announcement['type2'],
+                                      style: TextStyle(color: Colors.green))
+                                ]),
+                            SizedBox(height: 15),
+                            Text(announcement['title'],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground)),
+                            SizedBox(height: 18),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(children: [
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    formattedDate,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
+                                  )
+                                ]),
+                                Expanded(
+                                    child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: TextButton(
+                                            onPressed: () =>
+                                                showAnnouncementDetails(
+                                                    context, announcement),
+                                            child: Text("Devamını Oku",
+                                                style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16),
+                                                overflow:
+                                                    TextOverflow.ellipsis)))),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    'İstanbul Kodluyor',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8),
-              Text(
-                announcement['title']!,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),textAlign: TextAlign.start,
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.date_range_sharp, color: Colors.grey),
-                  Text(
-                    announcement['date']!,
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Devamını Oku işlemi
-                    },
-                    child: Text(
-                      'Devamını Oku',
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyLarge?.color ?? Theme.of(context).colorScheme.background,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

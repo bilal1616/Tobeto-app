@@ -615,10 +615,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tobeto_app/widget/profile_widgets/custom_city_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_date_picker.dart';
-import 'package:tobeto_app/widget/profile_widgets/custom_education_dropdown.dart';
-import 'package:tobeto_app/widget/profile_widgets/custom_language_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_skills_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_socialmedia_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_text_field.dart';
@@ -705,8 +702,8 @@ class _ProfileInformationState extends State<ProfileInformation> {
     TextEditingController _graduateDateController = TextEditingController();
 
   DateTime? _selectedBirthDate;
-    DateTime? _selectedStartEducationDate;
-       DateTime? _selectedEndEducationDate;
+  DateTime? _selectedStartEducationDate;
+  DateTime? _selectedEndEducationDate;
   String _selectedEducation=educationList.first;
   
   String _selectedSkill=skillsList.first;
@@ -714,8 +711,8 @@ class _ProfileInformationState extends State<ProfileInformation> {
   String _selectedCity=cityList.first;
   
   String _selectedWorkCity=cityList.first;
-   String _selectedLanguage=languageList.first;
-    String _selectedLanguageLevel=languageLevelList.first;
+  String _selectedLanguage=languageList.first;
+  String _selectedLanguageLevel=languageLevelList.first;
 
 
   Skill? selectedSkill;
