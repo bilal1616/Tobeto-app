@@ -50,7 +50,7 @@ class _ExamCardState extends State<ExamCard> {
               return CircularProgressIndicator();
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Text("No exams found.");
+              return Text("Sınav bulunamadı.");
             }
 
             return Padding(
@@ -58,7 +58,7 @@ class _ExamCardState extends State<ExamCard> {
               child: Container(
                 height: 220,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.background,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -102,7 +102,8 @@ class _ExamCardState extends State<ExamCard> {
                     child: Text(
                       exam['title'],
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
+                          color: Theme.of(context).colorScheme.onBackground,
+                          fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 6,
                     ),
@@ -111,7 +112,8 @@ class _ExamCardState extends State<ExamCard> {
                   Text(
                     exam['subtitle'],
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground),
+                        color: Theme.of(context).colorScheme.onBackground,
+                        fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 6,
                   ),
@@ -121,7 +123,7 @@ class _ExamCardState extends State<ExamCard> {
                       Icon(
                         Icons.timer_outlined,
                         size: 21,
-                        color: Colors.purple,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       SizedBox(width: 5),
                       Text(
@@ -131,7 +133,8 @@ class _ExamCardState extends State<ExamCard> {
                             .titleMedium
                             ?.copyWith(
                                 color:
-                                    Theme.of(context).colorScheme.onBackground),
+                                    Theme.of(context).colorScheme.onBackground,
+                                fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -173,7 +176,29 @@ class _ExamCardState extends State<ExamCard> {
                 Text(
                   exam['title'],
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Sınav Süresi: ${exam['content duration']}',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Soru Sayısı: ${exam['content question']}',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Soru Tipi: ${exam['content type']}',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),
                 Expanded(
@@ -188,13 +213,100 @@ class _ExamCardState extends State<ExamCard> {
                 Align(
                   alignment: Alignment.center,
                   child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Raporu Görüntüle',
+                    onPressed: () {
+                      showReportDetails(context,
+                          userId); // Raporları görüntüle fonksiyonunu çağır
+                    },
+                    child: Text('Raporları Görüntüle',
                         style: TextStyle(fontSize: 18)),
                   ),
                 ),
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showReportDetails(BuildContext context, String? userId) async {
+    if (userId == null) return;
+
+    var userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    var reportDetailIds =
+        userDoc.data()?['report-detail'] as List<dynamic>? ?? [];
+    var reportDetails = <String, dynamic>{};
+
+    for (var id in reportDetailIds) {
+      var reportDetailDoc = await FirebaseFirestore.instance
+          .collection('report-detail')
+          .doc(id)
+          .get();
+      if (reportDetailDoc.exists) {
+        reportDetails = reportDetailDoc.data()!;
+      }
+    }
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Text(
+                  'Test Bitti',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Doğru: ${reportDetails['correct']}',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Yanlış: ${reportDetails['incorrect']}',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Boş: ${reportDetails['empty']}',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Puan: ${reportDetails['score']}',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Align(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Kapat', style: TextStyle(fontSize: 18)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

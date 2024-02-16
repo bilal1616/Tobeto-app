@@ -16,12 +16,12 @@ class VideoApp extends StatefulWidget {
   final String title;
   final String subtitle;
 
-  const VideoApp(
-      {Key? key,
-      required this.videoURL,
-      required this.title,
-      required this.subtitle})
-      : super(key: key);
+  const VideoApp({
+    Key? key,
+    required this.videoURL,
+    required this.title,
+    required this.subtitle,
+  }) : super(key: key);
 
   @override
   _VideoAppState createState() => _VideoAppState();
@@ -40,7 +40,6 @@ class _VideoAppState extends State<VideoApp> {
         setState(() {});
       });
     _controller.setLooping(true);
-    // _controller.play(); // Bu satır kaldırıldı, böylece video otomatik olarak başlamayacak.
   }
 
   @override
@@ -53,8 +52,7 @@ class _VideoAppState extends State<VideoApp> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                    'assets/videoback.png'), // Arkaplan resmi dosya yolunu değiştirin
+                image: AssetImage('assets/videoback.png'), // Arkaplan resmi
                 fit: BoxFit.cover,
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tobeto_app/widget/reviews_widget/view_report.dart';
 
 class ReviewsButton extends StatelessWidget {
   const ReviewsButton({Key? key}) : super(key: key);
@@ -77,7 +78,10 @@ class ReviewsButton extends StatelessWidget {
                   SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                   ElevatedButton(
                     onPressed: () {
-                      // Butona basıldığında yapılacak işlem.
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ViewReport()),
+                      );
                     },
                     child: Text(
                       'Raporu Görüntüle',

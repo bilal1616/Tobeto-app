@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tobeto_app/widget/reviews_widget/reviews_button.dart';
+import 'package:tobeto_app/widget/reviews_widget/reviews_categories.dart';
 import 'package:tobeto_app/widget/reviews_widget/reviews_descriptioncard.dart';
 import 'package:tobeto_app/widget/reviews_widget/reviews_notbutton.dart';
 
 class Reviews extends StatefulWidget {
-  final bool
-      showAppBar; // AppBar'ı gösterip göstermeme durumunu tutacak parametre
+  final bool showAppBar;
   const Reviews({Key? key, this.showAppBar = false}) : super(key: key);
 
   @override
@@ -20,44 +20,9 @@ class _ReviewsState extends State<Reviews> {
     String imagePath =
         isDarkMode ? "assets/tobeto-logo-dark.png" : "assets/tobeto-logo.png";
 
-    // Bu liste kartların her biri için bilgileri içerir.
-    final List<Map<String, dynamic>> categories = [
-      {
-        'title': 'Front End',
-        'icon': Icons.list_outlined,
-        'buttonText': 'Başla',
-        'color': Theme.of(context).primaryColor,
-      },
-      {
-        'title': 'Full Stack',
-        'icon': Icons.list_outlined,
-        'buttonText': 'Başla',
-        'color': Theme.of(context).primaryColor,
-      },
-      {
-        'title': 'Back End',
-        'icon': Icons.list_outlined,
-        'buttonText': 'Başla',
-        'color': Theme.of(context).primaryColor,
-      },
-      {
-        'title': 'Microsoft SQL Server',
-        'icon': Icons.list_outlined,
-        'buttonText': 'Başla',
-        'color': Theme.of(context).primaryColor,
-      },
-      {
-        'title': 'Masaüstü Programlama',
-        'icon': Icons.list_outlined,
-        'buttonText': 'Başla',
-        'color': Theme.of(context).primaryColor,
-      },
-    ];
-
     return Scaffold(
       appBar: widget.showAppBar
           ? AppBar(
-              // showAppBar true ise AppBar göster
               title: Image.asset(
                 imagePath,
                 width: 120,
@@ -68,7 +33,7 @@ class _ReviewsState extends State<Reviews> {
                 onPressed: () => Navigator.pop(context),
               ),
             )
-          : null, // showAppBar false ise AppBar gösterme
+          : null,
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -81,13 +46,14 @@ class _ReviewsState extends State<Reviews> {
                   textAlign: TextAlign.center,
                   text: TextSpan(children: [
                     TextSpan(
-                        text: 'Yetkin',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor)),
+                      text: 'Yetkin',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor),
+                    ),
                     TextSpan(
                       text: 'liklerini ücretsiz ölç,\n',
                       style: Theme.of(context)
@@ -127,7 +93,7 @@ class _ReviewsState extends State<Reviews> {
               ReviewsButton(),
               ReviewsNotbutton(),
               SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              ...categories
+              ...reviewCategories
                   .map((category) => Card(
                         elevation: 4.0,
                         margin: const EdgeInsets.symmetric(
@@ -145,7 +111,10 @@ class _ReviewsState extends State<Reviews> {
                             style: TextStyle(color: Colors.white),
                           ),
                           trailing: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showReviewCategoryDialog(
+                                  context, category['title']);
+                            },
                             child: Text(
                               category['buttonText'],
                               style: TextStyle(
@@ -173,33 +142,35 @@ class _ReviewsState extends State<Reviews> {
                       ))
                   .toList(),
               SizedBox(height: MediaQuery.of(context).size.height * 0.09),
-              _buildDecoratedImage(context), // Dekore edilmiş resmi ekleyin.
+              _buildDecoratedImage(context),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 0.1),
                 child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(children: [
-                      TextSpan(
-                          text: 'Aboneliğe özel\n',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor)),
-                      TextSpan(
-                        text: 'değerlendirme araçları için',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .color),
-                      ),
-                    ])),
+                  textAlign: TextAlign.center,
+                  text: TextSpan(children: [
+                    TextSpan(
+                      text: 'Aboneliğe özel\n',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor),
+                    ),
+                    TextSpan(
+                      text: 'değerlendirme araçları için',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .color),
+                    ),
+                  ]),
+                ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.03),
               const Reviewsdescriptioncard(),
@@ -214,15 +185,13 @@ class _ReviewsState extends State<Reviews> {
   Widget _buildDecoratedImage(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(1.0),
-      width: MediaQuery.of(context).size.width *
-          0.2, // Resmin genişliğini ayarlayın.
-      height: MediaQuery.of(context).size.height *
-          0.2, // Resmin yüksekliğini ayarlayın.
+      width: MediaQuery.of(context).size.width * 0.2,
+      height: MediaQuery.of(context).size.height * 0.2,
       child: Opacity(
-        opacity: 0.8, // Resmin opaklığını ayarlayın.
+        opacity: 0.8,
         child: Image.asset(
           "assets/images.png",
-          fit: BoxFit.fitHeight, // Resmi kaplayacak şekilde boyutlandırın.
+          fit: BoxFit.fitHeight,
         ),
       ),
     );
