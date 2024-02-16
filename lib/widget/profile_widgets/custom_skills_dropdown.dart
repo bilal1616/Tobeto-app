@@ -37,7 +37,7 @@ class CustomSkillsDropdown extends StatelessWidget {
             height: 15,
           ),
           SizedBox(
-            height: 45.0,
+            height: 57.0,
             child: DropdownButtonFormField<Skill>(
               value: selectedSkill,
               onChanged: onChanged,

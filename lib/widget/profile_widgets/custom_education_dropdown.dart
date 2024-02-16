@@ -32,7 +32,7 @@ class CustomEducationDropdown extends StatelessWidget {
             height: 15,
           ),
           SizedBox(
-            height: 45.0,
+            height: 57.0,
             child: DropdownButtonFormField<String>(
               value: selectedValue,
               onChanged: onChanged,
