@@ -6,47 +6,47 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tobeto_app/screen/profile_edit/profile.dart';
+import 'package:tobeto_app/screen/profile_edit/profile_settings.dart';
 import 'package:tobeto_app/screen/profile_edit/work.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_date_picker.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_skills_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_socialmedia_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_text_field.dart';
 
-
-List<String> educationList = <String>['Lisans', 'Önlisans', 'Yüksek Lisans', 'Doktora'];
+List<String> educationList = <String>[
+  'Lise',
+  'Önlisans',
+  'Lisans',
+  'Yüksek Lisans',
+  'Doktora'
+];
 List<String> cityList = <String>['istanbul', 'izmir', 'Ankara', 'Antalya'];
 
 class EductionTab extends StatefulWidget {
   @override
   _EductionTabState createState() => _EductionTabState();
 }
-class _EductionTabState extends State<EductionTab> {
 
+class _EductionTabState extends State<EductionTab> {
   @override
   TextEditingController _universityController = TextEditingController();
   TextEditingController _sectionController = TextEditingController();
 
-  TextEditingController _startEducationDateController =TextEditingController();
- 
-    TextEditingController _graduateDateController = TextEditingController();
+  TextEditingController _startEducationDateController = TextEditingController();
+
+  TextEditingController _graduateDateController = TextEditingController();
 
   DateTime? _selectedStartEducationDate;
   DateTime? _selectedEndEducationDate;
-  String _selectedEducation=educationList.first;
-  
-  
-  
-  String _selectedCity=cityList.first;
-  
-  
+  String _selectedEducation = educationList.first;
+
+  String _selectedCity = cityList.first;
 
   Skill? selectedSkill;
   SocialMedia? selectedMedia;
 
-
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.all(15.0),
       child: SingleChildScrollView(
         child: Column(
@@ -64,51 +64,58 @@ class _EductionTabState extends State<EductionTab> {
               helperText: "Bölüm",
               hintText: 'Yazılım',
             ),
-         Padding(
-      padding: EdgeInsets.symmetric(horizontal: 25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Eğitim Durumu",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          SizedBox(
-            height: 57.0,
-            child: DropdownButtonFormField<String>(
-      value: _selectedEducation,
-      decoration: InputDecoration(
-        hintText: _selectedEducation,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Eğitim Durumu",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    height: 57.0,
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedEducation,
+                      decoration: InputDecoration(
+                        hintText: _selectedEducation,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      icon: const Icon(Icons.arrow_drop_down),
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.deepPurple),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedEducation = value!;
+                        });
+                      },
+                      items: educationList
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
-      icon: const Icon(Icons.arrow_drop_down),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      onChanged: (String? value) {
-        setState(() {
-          _selectedEducation = value!;
-        });
-      },
-      items: educationList.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    ),
-          ),
-          ],
-         ),
-         ),
+            ),
             _buildEducationStartDateTextField(),
             _buildGradudateDateTextField(),
             Padding(
@@ -120,7 +127,7 @@ class _EductionTabState extends State<EductionTab> {
                     backgroundColor: Colors.purple,
                   ),
                   onPressed: () {
-                     _saveEducationToFirestore();
+                    _saveEducationToFirestore();
                   },
                   child: Text(
                     "Kaydet",
@@ -135,9 +142,7 @@ class _EductionTabState extends State<EductionTab> {
     );
   }
 
-
-
-   Widget _buildEducationStartDateTextField() {
+  Widget _buildEducationStartDateTextField() {
     return DatePickerTextField(
       controller: _startEducationDateController,
       labelText: 'Başlangıç Tarihi',
@@ -172,51 +177,58 @@ class _EductionTabState extends State<EductionTab> {
               helperText: "Bölüm",
               hintText: 'Yazılım',
             ),
-         Padding(
-      padding: EdgeInsets.symmetric(horizontal: 25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Eğitim Durumu",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          SizedBox(
-            height: 57.0,
-            child: DropdownButtonFormField<String>(
-      value: _selectedEducation,
-      decoration: InputDecoration(
-        hintText: _selectedEducation,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Eğitim Durumu",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    height: 57.0,
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedEducation,
+                      decoration: InputDecoration(
+                        hintText: _selectedEducation,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      icon: const Icon(Icons.arrow_drop_down),
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.deepPurple),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedEducation = value!;
+                        });
+                      },
+                      items: educationList
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
-      icon: const Icon(Icons.arrow_drop_down),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      onChanged: (String? value) {
-        setState(() {
-          _selectedEducation = value!;
-        });
-      },
-      items: educationList.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    ),
-          ),
-          ],
-         ),
-         ),
+            ),
             _buildEducationStartDateTextField(),
             _buildGradudateDateTextField(),
             Padding(
@@ -228,7 +240,7 @@ class _EductionTabState extends State<EductionTab> {
                     backgroundColor: Colors.purple,
                   ),
                   onPressed: () {
-                     _saveEducationToFirestore();
+                    _saveEducationToFirestore();
                   },
                   child: Text(
                     "Kaydet",
@@ -243,29 +255,31 @@ class _EductionTabState extends State<EductionTab> {
     );
   }
 
+  void _saveEducationToFirestore() async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      // Handle the case where the user ID is not available
+      print("User ID is null. Cannot save education data.");
+      return;
+    }
 
-void _saveEducationToFirestore() async {
-  // Get the Firestore instance
-  
-  
-final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    // Point to a subcollection named "education" under the current user's document
+    final CollectionReference educationCollection =
+        firestore.collection('users').doc(userId).collection('education');
 
-  // Create a reference to the "profiles" collection
-  final CollectionReference<Map<String, dynamic>> workCollection =
-      firestore.collection('education');
-
-  // Create a new document in the "profiles" collection with the user's email as the document ID
-  await workCollection.doc(userId).set({
+    // Create a new document in the "education" subcollection
+    await educationCollection.add({
       'university': _universityController.text,
-    'section': _sectionController.text,
-    'educationStatus':  _selectedEducation,
-    'startDate':   _startEducationDateController.text.trim(), 
-    'graduateDate':  _graduateDateController.text.trim(),    
-  });
+      'section': _sectionController.text,
+      'educationStatus': _selectedEducation,
+      'startDate': _startEducationDateController.text.trim(),
+      'graduateDate': _graduateDateController.text.trim(),
+      // Include other relevant fields
+    });
 
-}
-
-
+    // Başarılı kayıt sonrası kullanıcıyı önceki sayfaya yönlendir
+    Navigator.pop(context, true);
+  }
 }

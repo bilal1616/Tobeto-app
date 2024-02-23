@@ -10,13 +10,19 @@ import 'package:tobeto_app/widget/profile_widgets/custom_skills_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_socialmedia_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_text_field.dart';
 
-
-List<String> cityList = <String>['istanbul', 'izmir', 'Ankara', 'Antalya'];
+List<String> cityList = <String>[
+  'İstanbul',
+  'İzmir',
+  'Ankara',
+  'Bursa',
+  'Kocaeli'
+];
 
 class WorkTab extends StatefulWidget {
   @override
   _WorkTabState createState() => _WorkTabState();
 }
+
 class _WorkTabState extends State<WorkTab> {
   File? _image;
   File? _selectedFile;
@@ -45,24 +51,21 @@ class _WorkTabState extends State<WorkTab> {
 
   @override
   TextEditingController _emailController = TextEditingController();
-  
+
   TextEditingController _descriptionController = TextEditingController();
-   
+
   TextEditingController _startWorkDateController = TextEditingController();
-    
+
   TextEditingController _endWorkDateController = TextEditingController();
 
-
- TextEditingController _companyController = TextEditingController();
+  TextEditingController _companyController = TextEditingController();
   TextEditingController _positionController = TextEditingController();
   TextEditingController _sectorController = TextEditingController();
-  String _selectedWorkCity=cityList.first;
-
+  String _selectedWorkCity = cityList.first;
 
   Skill? selectedSkill;
   SocialMedia? selectedMedia;
 
-     
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -90,51 +93,52 @@ class _WorkTabState extends State<WorkTab> {
             ),
             _buildStartDateTextField(),
             _buildEndDateTextField(),
-                 Padding(
-      padding: EdgeInsets.symmetric(horizontal: 25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Şehir",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          SizedBox(
-            height: 57.0,
-            child: DropdownButtonFormField<String>(
-      value: _selectedWorkCity,
-      decoration: InputDecoration(
-        hintText: _selectedWorkCity,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Şehir",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    height: 57.0,
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedWorkCity,
+                      decoration: InputDecoration(
+                        hintText: _selectedWorkCity,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      icon: const Icon(Icons.arrow_drop_down),
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.deepPurple),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedWorkCity = value!;
+                        });
+                      },
+                      items: cityList
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
-      icon: const Icon(Icons.arrow_drop_down),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      onChanged: (String? value) {
-        setState(() {
-          _selectedWorkCity = value!;
-        });
-      },
-      items: cityList.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    ),
-          ),
-          ],
-         ),
-         ),
+            ),
             CompCustomTextField(
               obscureText: false,
               controller: _descriptionController,
@@ -164,6 +168,7 @@ class _WorkTabState extends State<WorkTab> {
       ),
     );
   }
+
   Widget _buildStartDateTextField() {
     return DatePickerTextField(
       controller: _startWorkDateController,
@@ -180,32 +185,33 @@ class _WorkTabState extends State<WorkTab> {
     );
   }
 
-  
+  void _saveWorkToFirestore() async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
 
-void _saveWorkToFirestore() async {
-  // Get the Firestore instance
-  
-  
-final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    // "users" koleksiyonundaki kullanıcı belgesine referans
+    final DocumentReference userDocRef =
+        firestore.collection('users').doc(userId);
 
-  // Create a reference to the "profiles" collection
-  final CollectionReference<Map<String, dynamic>> workCollection =
-      firestore.collection('work');
+    // "workExperiences" alt koleksiyonuna yeni bir iş deneyimi belgesi ekle
+    final CollectionReference workExperiences =
+        userDocRef.collection('workExperiences');
 
-  // Create a new document in the "profiles" collection with the user's email as the document ID
-  await workCollection.doc(userId).set({
-     'company': _companyController.text,
-    'position': _positionController.text,
-    'sector': _sectorController.text,
-    'startDate':  _startWorkDateController.text.trim(), 
-    'endDate':  _endWorkDateController.text.trim(),     
-    'email': _emailController.text,
-    'description': _descriptionController.text,
-  });
+    // Yeni iş deneyimi belgesi oluştur
+    await workExperiences.add({
+      'company': _companyController.text,
+      'position': _positionController.text,
+      'sector': _sectorController.text,
+      'startDate': _startWorkDateController.text.trim(),
+      'endDate': _endWorkDateController.text.trim(),
+      'description': _descriptionController.text,
+      'city': _selectedWorkCity,
+      // Diğer alanlar buraya eklenebilir
+    });
 
-}
-
-
+    // Başarılı kayıt sonrası kullanıcıyı önceki sayfaya yönlendir
+    Navigator.pop(context, true);
+  }
 }

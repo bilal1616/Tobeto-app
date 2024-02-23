@@ -1,31 +1,71 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CertificateTab extends StatefulWidget {
   @override
   _CertificateTabState createState() => _CertificateTabState();
 }
+
 class _CertificateTabState extends State<CertificateTab> {
-  
   File? _selectedFile;
 
   Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    // Tarayıcıdan dosya seçme desteği ile
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'pdf', 'png'],
+    );
 
     if (result != null) {
+      PlatformFile file = result.files.first;
+
       setState(() {
-        _selectedFile = File(result.files.single.path!);
+        _selectedFile = File(file.path!);
       });
     }
   }
+
+  Future<void> _saveCertificatesToFirestore() async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null || _selectedFile == null) {
+      print("Kullanıcı girişi yapılmamış veya dosya seçilmemiş.");
+      return;
+    }
+
+    // Firebase Storage'a dosya yükleme
+    String filePath =
+        'certificates/$userId/${_selectedFile!.path.split('/').last}';
+    Reference storageReference = FirebaseStorage.instance.ref().child(filePath);
+
+    UploadTask uploadTask = storageReference.putFile(_selectedFile!);
+    await uploadTask.whenComplete(() async {
+      String downloadURL = await storageReference.getDownloadURL();
+
+      // Firestore'a sertifika URL'sini kaydet
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('certificates')
+          .add({
+        'certificateURL': downloadURL,
+        'uploadedAt': Timestamp.now(),
+      });
+    }).catchError((error) {
+      print("Sertifika yükleme hatası: $error");
+    });
+
+    // Başarılı kayıt sonrası kullanıcıyı önceki sayfaya yönlendir
+    Navigator.pop(context, true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,36 +111,4 @@ class _CertificateTabState extends State<CertificateTab> {
       ),
     );
   }
-
- 
-
-void _saveCertificatesToFirestore() async {  
-final String? userId = FirebaseAuth.instance.currentUser?.uid;
-
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  final CollectionReference<Map<String, dynamic>> certificatesCollection =
-      firestore.collection('certificates');
-      
-  await certificatesCollection.doc(userId).set({
-  });
-
-  if (_selectedFile != null) {
-    String fileName = 'certificates/${userId}.jpg';
-    Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
-
-    await storageReference.putFile(_selectedFile!);
-    String downloadURL = await storageReference.getDownloadURL();
-    await certificatesCollection.doc(userId).update({
-      'certificateURL': downloadURL,
-    });
-  }
-}
-
- 
-
-
- 
-
-
 }

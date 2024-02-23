@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tobeto_app/screen/profile_edit/certificate.dart';
 import 'package:tobeto_app/screen/profile_edit/education.dart';
 import 'package:tobeto_app/screen/profile_edit/language.dart';
-import 'package:tobeto_app/screen/profile_edit/profile.dart';
+import 'package:tobeto_app/screen/profile_edit/profile_settings.dart';
 import 'package:tobeto_app/screen/profile_edit/settings.dart';
 import 'package:tobeto_app/screen/profile_edit/skills.dart';
 import 'package:tobeto_app/screen/profile_edit/social_media.dart';
@@ -12,10 +12,9 @@ class ProfileInformation extends StatefulWidget {
   @override
   _ProfileInformationState createState() => _ProfileInformationState();
 }
+
 class _ProfileInformationState extends State<ProfileInformation> {
   @override
- 
-
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
@@ -53,14 +52,14 @@ class _ProfileInformationState extends State<ProfileInformation> {
         ),
         body: TabBarView(
           children: <Widget>[
-          ProfilTab(),
-          WorkTab(),
-          EductionTab(),
-          SkillsTab(),
-          CertificateTab(),
-          SocialMediaTab(),
-          LanguageTab(),
-          SettingsTab(),
+            ProfilTab(),
+            WorkTab(),
+            EductionTab(),
+            SkillsTab(),
+            CertificateTab(),
+            SocialMediaTab(),
+            LanguageTab(),
+            SettingsTab(),
           ],
         ),
       ),

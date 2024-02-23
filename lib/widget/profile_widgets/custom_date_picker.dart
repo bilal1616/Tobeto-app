@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DatePickerTextField extends StatefulWidget {
@@ -19,25 +18,19 @@ class DatePickerTextField extends StatefulWidget {
 
 class _DatePickerTextFieldState extends State<DatePickerTextField> {
   Future<void> _selectDate(BuildContext context) async {
-    showModalBottomSheet(
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
-      builder: (BuildContext builder) {
-        return Container(
-          height: MediaQuery.of(context).copyWith().size.height / 3,
-          child: CupertinoDatePicker(
-            initialDateTime: DateTime.now(),
-            onDateTimeChanged: (DateTime newDateTime) {
-              setState(() {
-                widget.controller.text =
-                    "${newDateTime.day}/${newDateTime.month}/${newDateTime.year}";
-              });
-              widget.onDateSelected?.call(newDateTime);
-            },
-            mode: CupertinoDatePickerMode.date,
-          ),
-        );
-      },
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
     );
+    if (pickedDate != null) {
+      setState(() {
+        widget.controller.text =
+            "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year.toString().padLeft(4, '0')}";
+      });
+      widget.onDateSelected?.call(pickedDate);
+    }
   }
 
   @override
@@ -58,21 +51,30 @@ class _DatePickerTextFieldState extends State<DatePickerTextField> {
           SizedBox(
             height: 15,
           ),
-          SizedBox(
-            height: 45.0,
-            child: TextField(
-              controller: widget.controller,
-              readOnly: true,
-              onTap: () => _selectDate(context),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: Colors.grey,
-                    width: 1.0,
+          InkWell(
+            onTap: () => _selectDate(context),
+            child: IgnorePointer(
+              child: TextFormField(
+                controller: widget.controller,
+                readOnly: true,
+                decoration: InputDecoration(
+                  suffixIcon: Icon(Icons.calendar_today),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 1.0,
+                    ),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                      width: 2.0,
+                    ),
+                  ),
+                  hintText: 'gg/aa/yyyy',
                 ),
-                suffixIcon: Icon(Icons.calendar_today),
               ),
             ),
           ),

@@ -11,20 +11,25 @@ import 'package:tobeto_app/widget/profile_widgets/custom_skills_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_socialmedia_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_text_field.dart';
 
-List<String> cityList = <String>['istanbul', 'izmir', 'Ankara', 'Antalya'];
-
+List<String> cityList = <String>[
+  'İstanbul',
+  'İzmir',
+  'Ankara',
+  'Bursa',
+  'Kocaeli'
+];
 
 class ProfilTab extends StatefulWidget {
   @override
   _ProfilTabState createState() => _ProfilTabState();
 }
+
 class _ProfilTabState extends State<ProfilTab> {
   File? _image;
+  final picker = ImagePicker();
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await picker.pickImage(source: source);
 
     if (pickedFile != null) {
       setState(() {
@@ -46,15 +51,9 @@ class _ProfilTabState extends State<ProfilTab> {
   TextEditingController _newPasswordAgainController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _birthDateController = TextEditingController();
- 
 
   DateTime? _selectedBirthDate;
-  DateTime? _selectedStartEducationDate;
-  DateTime? _selectedEndEducationDate;
-  
-  String _selectedCity=cityList.first;
-  
-  
+  String _selectedCity = cityList.first;
 
   Widget build(BuildContext context) {
     return Padding(
@@ -101,61 +100,52 @@ class _ProfilTabState extends State<ProfilTab> {
               helperText: "Ülke",
               hintText: 'Ülkenizi girin',
             ),
-            // CustomCityDropdown(
-            //   labelText: 'Şehir',
-            //   selectedCity: selectedCity1,
-            //   options: allCities,
-            //   onChanged: (CustomCity? newValue) {
-            //     setState(() {
-            //       selectedCity1 = newValue;
-            //     });
-            //   },
-            // ),
-              Padding(
-      padding: EdgeInsets.symmetric(horizontal: 25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Şehir",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          SizedBox(
-            height: 57.0,
-            child: DropdownButtonFormField<String>(
-      value: _selectedCity,
-      decoration: InputDecoration(
-        hintText: _selectedCity,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Şehir",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    height: 57.0,
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedCity,
+                      decoration: InputDecoration(
+                        hintText: _selectedCity,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      icon: const Icon(Icons.arrow_drop_down),
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.deepPurple),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCity = value!;
+                        });
+                      },
+                      items: cityList
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
-      icon: const Icon(Icons.arrow_drop_down),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      onChanged: (String? value) {
-        setState(() {
-          _selectedCity = value!;
-        });
-      },
-      items: cityList.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    ),
-          ),
-          ],
-         ),
-         ),
+            ),
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Container(
@@ -199,50 +189,69 @@ class _ProfilTabState extends State<ProfilTab> {
               ? Icon(
                   Icons.person,
                   size: 80,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.primary,
                 )
               : null,
         ),
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.blue,
-          child: IconButton(
-            icon: Icon(Icons.add),
-            onPressed: _pickImage,
-            color: Colors.white,
-          ),
+        PopupMenuButton<ImageSource>(
+          onSelected: _pickImage,
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: ImageSource.camera,
+              child: Text('Kameradan Çek'),
+            ),
+            PopupMenuItem(
+              value: ImageSource.gallery,
+              child: Text('Galeriden Seç'),
+            ),
+          ],
+          icon: Icon(Icons.camera_alt_rounded,
+              color: Theme.of(context).hintColor, size: 40),
         ),
       ],
     );
   }
-void _saveProfileToFirestore() async {  
-final String? userId = FirebaseAuth.instance.currentUser?.uid;
 
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  void _saveProfileToFirestore() async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
 
-  final CollectionReference<Map<String, dynamic>> profilesCollection =
-      firestore.collection('profiles');
-      
-  await profilesCollection.doc(userId).set({
-    'name': _nameController.text,
-    'surname': _surnameController.text,
-    'phone': _phoneController.text,
-    'birthdate': _birthDateController.text.trim(),
-    'tc': _tcController.text,
-    'email': _emailController.text,
-    'country': _countryController.text,
-    'city': _selectedCity,
-  });
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    // Kullanıcı profil bilgilerini 'profiles' alt koleksiyonuna kaydediyoruz.
+    final DocumentReference profileDocRef = firestore
+        .collection('users')
+        .doc(userId)
+        .collection('profiles')
+        .doc('mainProfile');
 
-  if (_image != null) {
-    String fileName = 'profilePictures/${userId}.jpg';
-    Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
+    Map<String, dynamic> profileData = {
+      'name': _nameController.text,
+      'surname': _surnameController.text,
+      'phone': _phoneController.text,
+      'birthdate': _birthDateController.text.trim(),
+      'tc': _tcController.text,
+      'email': _emailController.text,
+      'country': _countryController.text,
+      'city': _selectedCity,
+      // Diğer profil alanları buraya eklenebilir.
+    };
 
-    await storageReference.putFile(_image!);
-    String downloadURL = await storageReference.getDownloadURL();
-    await profilesCollection.doc(userId).update({
-      'profilePictureURL': downloadURL,
-    });
+    // Profil bilgilerini Firestore'a kaydet
+    await profileDocRef.set(profileData, SetOptions(merge: true));
+
+    // Profil resmini Firebase Storage'a kaydet ve URL'yi Firestore'a kaydet
+    if (_image != null) {
+      String fileName = 'profilePictures/${userId}.jpg';
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child(fileName);
+      await storageReference.putFile(_image!);
+      String downloadURL = await storageReference.getDownloadURL();
+      // 'mainProfile' belgesini güncelleyerek profil resmi URL'sini ekleyin
+      await profileDocRef.update({'profilePictureURL': downloadURL});
+    }
+
+    // Başarılı kayıt sonrası işlemler: Profil sayfasına yönlendir ve verileri yenile
+    Navigator.pop(
+        context, true); // true, başarılı bir kayıt işlemi yapıldığını belirtir.
   }
-}
 }

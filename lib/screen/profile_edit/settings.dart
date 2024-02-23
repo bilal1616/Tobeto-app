@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
-import 'package:tobeto_app/screen/splash_screen.dart';
-import 'package:tobeto_app/widget/profile_widgets/custom_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:tobeto_app/screen/loginscreen.dart';
 
 class SettingsTab extends StatefulWidget {
   @override
@@ -15,171 +15,157 @@ class _SettingsTabState extends State<SettingsTab> {
   TextEditingController _newPasswordAgainController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  void _deleteAccount() async {
-  try {
+  Future<void> _deleteUserAndSubcollections() async {
     User? user = _auth.currentUser;
+    if (user != null) {
+      final String userUid = user.uid;
 
-    // Kullanıcının Firebase Authentication üyeliğini silme
-    await user!.delete();
+      // Firestore'daki kullanıcı verileri ve alt koleksiyonları sil
+      await deleteUserAndSubcollections(userUid);
 
-    await _auth.signOut();
-    // Kullanıcının oturumunu kapatma
-  
+      // Firebase Storage'daki kullanıcı dosyalarını sil
+      await deleteUserStorageFiles(userUid);
 
-    // Başarılı bir şekilde hesap silindiğinde ve oturum kapatıldığında kullanıcıyı bilgilendir
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Üyelik İptal Edildi"),
-          content: Text("Üyeliğiniz başarıyla iptal edilmiştir."),
-          actions: [
-            TextButton(
-              onPressed: () {
-                  Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => SplashScreen()),
-                          );
-              },
-              child: Text("Tamam"),
-            ),
-          ],
-        );
-      },
-    );
-  } catch (e) {
-    // Hata durumunda kullanıcıyı bilgilendir
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Üyelik İptali Başarısız"),
-          content: Text("Üyelik iptali sırasında bir hata oluştu. Hata: $e"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                 Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => SplashScreen()),
-                          );
-              },
-              child: Text("Tamam"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-void _changePassword() async {
-  try {
-    User? user = _auth.currentUser;
+      // Kullanıcının Firebase Authentication üyeliğini sil
+      await user.delete();
 
-    // Kullanıcının mevcut şifresiyle giriş yap
-    AuthCredential credential = EmailAuthProvider.credential(
-      email: user!.email!,
-      password: _oldPasswordController.text,
-    );
+      // Kullanıcının oturumunu kapat
+      await _auth.signOut();
 
-    // Eğer eski şifre doğruysa devam et
-    await user.reauthenticateWithCredential(credential);
-
-    // Kontrol: Yeni şifrelerin eşleşip eşleşmediğini kontrol et
-    if (_newPasswordController.text == _newPasswordAgainController.text) {
-      // Şifre değiştirme işlemi
-      await user.updatePassword(_newPasswordController.text);
-
-      // Başarılı bir şekilde şifre güncellendiğinde kullanıcıyı bilgilendir
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Şifre başarıyla değiştirildi."),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } else {
-      // Yeni şifreler eşleşmiyorsa kullanıcıyı bilgilendir
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Şifreler eşleşmiyor. Şifre değiştirilmedi."),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
+      // Kullanıcıyı giriş ekranına yönlendir
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (Route<dynamic> route) => false,
       );
     }
-  } catch (e) {
-    // Hata durumunda kullanıcıyı bilgilendir (eski şifre yanlışsa buraya düşer)
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Şifreyi yanlış girdiniz. Şifre değiştirilmedi."),
-        duration: Duration(seconds: 2),
-        backgroundColor: Colors.red,
-      ),
-    );
   }
-}
+
+  Future<void> deleteUserAndSubcollections(String userUid) async {
+    List<String> subcollections = [
+      'certificates',
+      'education',
+      'languages',
+      'profiles',
+      'skills',
+      'socialMedia',
+      'workExperiences'
+    ];
+
+    try {
+      for (String collection in subcollections) {
+        var documentsSnapshot = await _firestore
+            .collection('users')
+            .doc(userUid)
+            .collection(collection)
+            .get();
+
+        for (var doc in documentsSnapshot.docs) {
+          await doc.reference.delete();
+        }
+      }
+
+      // Ana kullanıcı belgesini sil
+      await _firestore.collection('users').doc(userUid).delete();
+    } catch (e) {
+      print("Firestore'da kullanıcı ve alt koleksiyonları silerken hata: $e");
+    }
+  }
+
+  Future<void> deleteUserStorageFiles(String userUid) async {
+    try {
+      // Profil resmini sil
+      await _storage.ref('profilePictures/$userUid.jpg').delete();
+
+      // Sertifikaları sil
+      final ListResult result =
+          await _storage.ref('certificates/$userUid').listAll();
+      for (var file in result.items) {
+        await file.delete();
+      }
+    } catch (e) {
+      print("Storage'da dosyaları silerken hata: $e");
+    }
+  }
+
+  void _changePassword() async {
+    String oldPassword = _oldPasswordController.text;
+    String newPassword = _newPasswordController.text;
+    String newPasswordAgain = _newPasswordAgainController.text;
+
+    if (newPassword != newPasswordAgain) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Yeni şifreler uyuşmuyor."),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
+
+    User? user = _auth.currentUser;
+    AuthCredential credential = EmailAuthProvider.credential(
+        email: user!.email!, password: oldPassword);
+
+    try {
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Şifre başarıyla güncellendi."),
+        backgroundColor: Colors.green,
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Şifre güncellenirken bir hata oluştu: $e"),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        children: [
-          CompCustomTextField(
-            obscureText: true,
-            controller: _oldPasswordController,
-            helperText: 'Eski Şifre',
-            hintText: 'Eski Şifre',
-          ),
-          CompCustomTextField(
-            obscureText: true,
-            controller: _newPasswordController,
-            helperText: 'Yeni Şifre',
-            hintText: 'Yeni Şifre',
-          ),
-          CompCustomTextField(
-            obscureText: true,
-            controller: _newPasswordAgainController,
-            helperText: 'Yeni Şifre Tekrar',
-            hintText: 'Yeni Şifre Tekrar',
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Ayarlar'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              _buildPasswordField("Eski Şifre", _oldPasswordController),
+              _buildPasswordField("Yeni Şifre", _newPasswordController),
+              _buildPasswordField(
+                  "Yeni Şifre Tekrar", _newPasswordAgainController),
+              SizedBox(height: 20),
+              ElevatedButton(
                 onPressed: _changePassword,
-                child: Text(
-                  "Şifreyi Değiştir",
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: Text("Şifreyi Değiştir"),
               ),
-            ),
-          ),
-          SizedBox(width: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
-                onPressed: () {
-                  _deleteAccount();
-                },
-                child: Text(
-                  "Üyeliği Sonlandır",
-                  style: TextStyle(color: Colors.white),
-                ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _deleteUserAndSubcollections,
+                child:
+                    Text("Hesabı Sil", style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField(String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: TextFormField(
+        controller: controller,
+        obscureText: true,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
+        ),
       ),
     );
   }

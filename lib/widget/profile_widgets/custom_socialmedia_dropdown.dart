@@ -5,6 +5,7 @@ class SocialMedia {
 
   SocialMedia({required this.name});
 }
+
 class CustomSocialMediaDropdown extends StatelessWidget {
   final String labelText;
   final SocialMedia? selectedSocialMedia;
@@ -49,7 +50,13 @@ class CustomSocialMediaDropdown extends StatelessWidget {
               items: options.map((SocialMedia media) {
                 return DropdownMenuItem<SocialMedia>(
                   value: media,
-                  child: Text(media.name),
+                  child: Text(
+                    media.name,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
                 );
               }).toList(),
             ),
@@ -60,11 +67,11 @@ class CustomSocialMediaDropdown extends StatelessWidget {
   }
 }
 
- List<SocialMedia> socialMediaOptions = [
+List<SocialMedia> socialMediaOptions = [
   SocialMedia(name: 'Twitter'),
   SocialMedia(name: 'LinkedIn'),
   SocialMedia(name: 'Instagram'),
   SocialMedia(name: 'Github'),
-  SocialMedia(name: 'Dribble'),
-  SocialMedia(name: 'Behance'),
-]; 
+  SocialMedia(name: 'Medium'),
+  SocialMedia(name: 'Facebook'),
+];
