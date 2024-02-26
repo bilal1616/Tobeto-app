@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tobeto_app/screen/drawermainscreen.dart';
+import 'package:tobeto_app/screen/bottomnavigationbar.dart';
 import 'package:tobeto_app/screen/loginscreen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
     FirebaseAuth.instance.authStateChanges().first.then((user) {
       if (user != null) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const DrawerMainScreen()));
+            MaterialPageRoute(builder: (context) => const BottomNavigationBarScreen()));
       } else {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const LoginScreen()));

@@ -11,14 +11,14 @@ import 'package:tobeto_app/screen/profil_edit.dart';
 import 'package:tobeto_app/screen/profile.dart';
 import 'package:tobeto_app/screen/reviews.dart';
 
-class DrawerMainScreen extends StatefulWidget {
-  const DrawerMainScreen({Key? key}) : super(key: key);
+class BottomNavigationBarScreen extends StatefulWidget {
+  const BottomNavigationBarScreen({Key? key}) : super(key: key);
 
   @override
-  _DrawerMainScreenState createState() => _DrawerMainScreenState();
+  _BottomNavigationBarScreenState createState() => _BottomNavigationBarScreenState();
 }
 
-class _DrawerMainScreenState extends State<DrawerMainScreen> {
+class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   int _selectedPageIndex = 0;
   String? _username;
 
@@ -39,19 +39,16 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
   void _loadUsername() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // Kullanıcının Firestore'daki bilgisini çek
       final userDocSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .get();
 
       String? username;
-      // Firestore'da kayıtlı kullanıcı adı varsa kullan
       if (userDocSnapshot.exists &&
           userDocSnapshot.data()!.containsKey('username')) {
         username = userDocSnapshot.data()!['username'];
       } else {
-        // Firestore'da kullanıcı adı yoksa Google'dan alınan adı kullan
         username = user.displayName;
       }
 
@@ -82,7 +79,6 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
               title: const Text('Tobeto'),
               onTap: () {
                 Navigator.pop(ctx);
-                // Tobeto ana sayfasına yönlendirme
               },
             ),
             ListTile(
@@ -96,7 +92,7 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
               leading: const Icon(Icons.arrow_back),
               title: const Text('Ana Menü'),
               onTap: () {
-                Navigator.pop(ctx); // Açılır menüyü kapat ve ana menüye dön
+                Navigator.pop(ctx);
               },
             ),
           ],
@@ -115,7 +111,7 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
               leading: const Icon(Icons.edit),
               title: const Text('Profil Bilgileri'),
               onTap: () {
-                Navigator.pop(ctx); // İç menüyü kapat
+                Navigator.pop(ctx);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProfileInformation()),
@@ -127,17 +123,11 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
               title: const Text('Oturumu Kapat'),
               onTap: () async {
                 Navigator.pop(context);
-
-                //Firebaseden çıkış yap
                 await FirebaseAuth.instance.signOut();
-
-                //Google ile giriş yapılmışsa googledan çıkış yap
                 final GoogleSignIn googleSignIn = GoogleSignIn();
                 if (await googleSignIn.isSignedIn()) {
                   await googleSignIn.signOut();
                 }
-
-                //Login ekranına yönlendir
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
                   (Route<dynamic> Route) => false,
@@ -148,7 +138,7 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
               leading: const Icon(Icons.arrow_back),
               title: const Text('Önceki Sayfa'),
               onTap: () {
-                Navigator.pop(ctx); // İç menüyü kapat ve üst menüye dön
+                Navigator.pop(ctx);
               },
             ),
           ],
@@ -174,22 +164,16 @@ class _DrawerMainScreenState extends State<DrawerMainScreen> {
           width: 120,
           height: 60,
         ),
-        // Diğer AppBar ayarları
       ),
       body: _pages[_selectedPageIndex],
-      floatingActionButton:
-          const FloatingActionMenuButton(), // Özel FAB widget'ınızı buraya ekleyin
+      floatingActionButton: const FloatingActionMenuButton(),
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
         currentIndex: _selectedPageIndex,
         selectedItemColor: Theme.of(context).iconTheme.color,
         unselectedItemColor: Theme.of(context).iconTheme.color,
-        selectedLabelStyle: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w700), // Seçili label stilini ayarla
-        unselectedLabelStyle: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w700), // Seçilmemiş label stilini ayarla
+        selectedLabelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
+        unselectedLabelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home, color: iconColor),
