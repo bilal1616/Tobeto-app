@@ -31,38 +31,47 @@ class _SurveysState extends State<Surveys> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
-          var userDoc = snapshot.data;
-          var surveyIds = List.from(userDoc?['surveys'] ?? []);
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                'assets/videoback.png'), // Arka plan resmi burada belirtilmeli
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+            var userDoc = snapshot.data;
+            var surveyIds = List.from(userDoc?['surveys'] ?? []);
 
-          return ListView.builder(
-            itemCount: surveyIds.length,
-            itemBuilder: (context, index) {
-              return FutureBuilder<DocumentSnapshot>(
-                future: FirebaseFirestore.instance
-                    .collection('surveys')
-                    .doc(surveyIds[index])
-                    .get(),
-                builder: (context, surveySnapshot) {
-                  if (!surveySnapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  var surveyData = surveySnapshot.data;
-                  return _buildSurveyCard(
-                      context, surveyData?['imageURL'], surveyData?['title']);
-                },
-              );
-            },
-          );
-        },
+            return ListView.builder(
+              itemCount: surveyIds.length,
+              itemBuilder: (context, index) {
+                return FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('surveys')
+                      .doc(surveyIds[index])
+                      .get(),
+                  builder: (context, surveySnapshot) {
+                    if (!surveySnapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    var surveyData = surveySnapshot.data;
+                    return _buildSurveyCard(
+                        context, surveyData?['imageURL'], surveyData?['title']);
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

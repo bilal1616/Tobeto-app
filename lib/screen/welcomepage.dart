@@ -1,21 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tobeto_app/screen/drawermainscreen.dart';
+import 'package:tobeto_app/screen/bottomnavigationbar.dart';
 import 'package:tobeto_app/screen/loginscreen.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+class WelcomePage extends StatefulWidget {
+  const WelcomePage({Key? key}) : super(key: key);
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  _WelcomePageState createState() => _WelcomePageState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _WelcomePageState extends State<WelcomePage> {
   void _navigateToNextScreen() {
     FirebaseAuth.instance.authStateChanges().first.then((user) {
       if (user != null) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const DrawerMainScreen()));
+            MaterialPageRoute(builder: (context) => const BottomNavigationBarScreen()));
       } else {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const LoginScreen()));
@@ -48,8 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                  backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.8),
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 ),
               ),

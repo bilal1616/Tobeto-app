@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:tobeto_app/screen/drawermainscreen.dart';
+import 'package:tobeto_app/screen/bottomnavigationbar.dart';
 import 'package:tobeto_app/theme/app_color.dart';
 
 final firebaseAuthInstance = FirebaseAuth.instance;
@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const DrawerMainScreen(),
+          builder: (context) => const BottomNavigationBarScreen(),
         ),
       );
     } on FirebaseAuthException catch (error) {
@@ -70,6 +70,65 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // Mail adresiyle parola sıfırlama işlemi
+  void _resetPassword(BuildContext context) async {
+    TextEditingController emailController = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Parolamı Unuttum"),
+          content: TextField(
+            controller: emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              labelText: 'E-posta',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("İptal"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Gönder"),
+              onPressed: () async {
+                String email = emailController.text.trim();
+                if (email.isNotEmpty) {
+                  try {
+                    await firebaseAuthInstance.sendPasswordResetEmail(
+                        email: email);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Parola sıfırlama e-postası gönderildi."),
+                      ),
+                    );
+                  } catch (error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            "Parola sıfırlama e-postası gönderilirken bir hata oluştu."),
+                      ),
+                    );
+                  }
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Lütfen bir e-posta adresi girin."),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode =
@@ -84,8 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Positioned.fill(
             child: Image.asset(
               imagePath1,
-              fit: BoxFit
-                  .cover, // Resmi tüm ekranı kaplayacak şekilde ölçeklendir
+              fit: BoxFit.cover,
             ),
           ),
           Center(
@@ -104,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(imagePath, width: 150, height: 75),
-                        // Kullanıcı adı alanı sadece kayıt ol durumunda görünür
                         if (!_isLogin)
                           TextFormField(
                             decoration: const InputDecoration(
@@ -142,8 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               : "Giriş Sayfasına Git"),
                         ),
                         SizedBox(
-                            height: MediaQuery.of(context).size.height *
-                                0.015), // Boşluk ekleme
+                            height: MediaQuery.of(context).size.height * 0.015),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -152,11 +208,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 UserCredential? userCredential =
                                     await signInWithGoogle();
                                 if (userCredential != null) {
-                                  // Google ile giriş başarılı, ana ekrana yönlendir
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          const DrawerMainScreen(),
+                                          const BottomNavigationBarScreen(),
                                     ),
                                   );
                                 }
@@ -166,25 +221,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               label: Text("Google ile Giriş Yap"),
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor: AppColor
-                                    .favoriteButtonColor, // Butonun metin ve ikon rengi
-                                textStyle: TextStyle(
-                                    color: Colors.white), // Metin stili
+                                backgroundColor: AppColor.favoriteButtonColor,
+                                textStyle: TextStyle(color: Colors.white),
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8), // Padding
+                                    horizontal: 12, vertical: 8),
                               ),
                             ),
                           ],
                         ),
                         SizedBox(
-                            height: MediaQuery.of(context).size.height *
-                                0.015), // Boşluk ekleme
-                        const Divider(), // Divider ekleyin
+                            height: MediaQuery.of(context).size.height * 0.015),
+                        const Divider(),
                         SizedBox(
-                            height: MediaQuery.of(context).size.height *
-                                0.009), // Boşluk ekleme
+                            height: MediaQuery.of(context).size.height * 0.009),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            _resetPassword(context);
+                          },
                           child: const Text("Parolamı Unuttum"),
                         ),
                       ],

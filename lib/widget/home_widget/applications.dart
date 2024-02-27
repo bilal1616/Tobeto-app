@@ -78,31 +78,40 @@ class _ApplicationsState extends State<Applications> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: fetchApplications(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("Başvuru bulunamadı."));
-          }
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                'assets/videoback.png'), // Arka plan resmi burada belirtilmeli
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: StreamBuilder<List<Map<String, dynamic>>>(
+          stream: fetchApplications(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text("Başvuru bulunamadı."));
+            }
 
-          List<Map<String, dynamic>> applications = snapshot.data!;
-          return ListView.builder(
-            itemCount: applications.length,
-            itemBuilder: (context, index) {
-              final app = applications[index];
-              return _buildApplicationCard(
-                context,
-                app['title'],
-                app['subtitle'],
-                app['subtitle1'],
-                app['state'],
-              );
-            },
-          );
-        },
+            List<Map<String, dynamic>> applications = snapshot.data!;
+            return ListView.builder(
+              itemCount: applications.length,
+              itemBuilder: (context, index) {
+                final app = applications[index];
+                return _buildApplicationCard(
+                  context,
+                  app['title'],
+                  app['subtitle'],
+                  app['subtitle1'],
+                  app['state'],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

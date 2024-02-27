@@ -81,109 +81,119 @@ class _AnnouncementAndNewsState extends State<AnnouncementAndNews> {
             icon: Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop()),
       ),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: fetchAnnouncements(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("Duyuru bulunamadı."));
-          }
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                'assets/videoback.png'), // Arka plan resmi burada belirtilmeli
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: StreamBuilder<List<Map<String, dynamic>>>(
+          stream: fetchAnnouncements(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text("Duyuru bulunamadı."));
+            }
 
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final announcement = snapshot.data![index];
-              DateTime date = (announcement['date'] as Timestamp).toDate();
-              String formattedDate = DateFormat('dd.MM.yyyy').format(date);
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final announcement = snapshot.data![index];
+                DateTime date = (announcement['date'] as Timestamp).toDate();
+                String formattedDate = DateFormat('dd.MM.yyyy').format(date);
 
-              return Card(
-                margin: EdgeInsets.all(10),
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                child: Row(
-                  children: [
-                    Container(
-                        width: 5,
-                        height: 155,
-                        decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                bottomLeft: Radius.circular(12)))),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                return Card(
+                  margin: EdgeInsets.all(10),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Row(
+                    children: [
+                      Container(
+                          width: 5,
+                          height: 155,
+                          decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  bottomLeft: Radius.circular(12)))),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(announcement['type'],
+                                        style: TextStyle(color: Colors.green)),
+                                    Text(announcement['type2'],
+                                        style: TextStyle(color: Colors.green))
+                                  ]),
+                              SizedBox(height: 15),
+                              Text(announcement['title'],
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onBackground)),
+                              SizedBox(height: 18),
+                              Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(announcement['type'],
-                                      style: TextStyle(color: Colors.green)),
-                                  Text(announcement['type2'],
-                                      style: TextStyle(color: Colors.green))
-                                ]),
-                            SizedBox(height: 15),
-                            Text(announcement['title'],
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onBackground)),
-                            SizedBox(height: 18),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(children: [
-                                  Icon(
-                                    Icons.calendar_today,
-                                    size: 20,
-                                    color: Colors.black,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    formattedDate,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onBackground),
-                                  )
-                                ]),
-                                Expanded(
-                                    child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: TextButton(
-                                            onPressed: () =>
-                                                showAnnouncementDetails(
-                                                    context, announcement),
-                                            child: Text("Devamını Oku",
-                                                style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 16),
-                                                overflow:
-                                                    TextOverflow.ellipsis)))),
-                              ],
-                            ),
-                          ],
+                                  Row(children: [
+                                    Icon(
+                                      Icons.calendar_today,
+                                      size: 20,
+                                      color: Colors.black,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      formattedDate,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground),
+                                    )
+                                  ]),
+                                  Expanded(
+                                      child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: TextButton(
+                                              onPressed: () =>
+                                                  showAnnouncementDetails(
+                                                      context, announcement),
+                                              child: Text("Devamını Oku",
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 16),
+                                                  overflow:
+                                                      TextOverflow.ellipsis)))),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
