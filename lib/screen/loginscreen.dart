@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tobeto_app/screen/bottomnavigationbar.dart';
+import 'package:tobeto_app/screen/welcomepage.dart';
 import 'package:tobeto_app/theme/app_color.dart';
 
 final firebaseAuthInstance = FirebaseAuth.instance;
@@ -211,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          const BottomNavigationBarScreen(),
+                                          const WelcomePage(),
                                     ),
                                   );
                                 }
