@@ -3,11 +3,7 @@
 
 İstanbul Kodluyor eğitimi Tobeto Mobil Uygulaması
 
-## Katkı Sağlayanlar 
-
-[@Oya Özcan](https://github.com/OyaOzcan) tasarım ve geliştirme
-<br/>
-[@Berkay Güneş](https://github.com/brkgns) tasarım ve geliştirme
+## Katkı Sağlayanlar
 
 ## Renk Referansı
 
