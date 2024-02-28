@@ -18,7 +18,7 @@ class _WelcomePageState extends State<WelcomePage> {
             MaterialPageRoute(builder: (context) => const BottomNavigationBarScreen()));
       } else {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LoginScreen()));
+            MaterialPageRoute(builder: (context) => LoginScreen()));
       }
     });
   }
