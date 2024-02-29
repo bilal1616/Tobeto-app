@@ -23,10 +23,10 @@ class CustomLanguageDropdown extends StatelessWidget {
           Text(
             labelText,
             textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 15,
@@ -44,7 +44,13 @@ class CustomLanguageDropdown extends StatelessWidget {
               items: options.map((Language language) {
                 return DropdownMenuItem<Language>(
                   value: language,
-                  child: Text(language.name),
+                  child: Text(
+                    language.name,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
                 );
               }).toList(),
             ),
@@ -60,12 +66,13 @@ class Language {
 
   Language({required this.name});
 }
-  Language? selectedLanguage;
-  List<Language> languages = [
-    Language(name: 'İngilizce'),
-    Language(name: 'Almanca'),
-    Language(name: 'İspanyolca'),
-  ];
+
+Language? selectedLanguage;
+List<Language> languages = [
+  Language(name: 'İngilizce'),
+  Language(name: 'Almanca'),
+  Language(name: 'İspanyolca'),
+];
 
 class LanguageLevel {
   final String level;
@@ -96,10 +103,10 @@ class CustomLanguageLevelDropdown extends StatelessWidget {
           Text(
             labelText,
             textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 15,
@@ -117,7 +124,13 @@ class CustomLanguageLevelDropdown extends StatelessWidget {
               items: options.map((LanguageLevel level) {
                 return DropdownMenuItem<LanguageLevel>(
                   value: level,
-                  child: Text(level.level),
+                  child: Text(
+                    level.level,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
                 );
               }).toList(),
             ),
@@ -128,10 +141,9 @@ class CustomLanguageLevelDropdown extends StatelessWidget {
   }
 }
 
- List<LanguageLevel> languageLevels = [
-    LanguageLevel(level: 'Temel Seviye(A1-A2)'),
-    LanguageLevel(level: 'Orta Seviye(B1-B2)'),
-    LanguageLevel(level: 'İleri Seviye(C1-C2)'),
-      LanguageLevel(level: 'Anadil'),
-    
-  ];
+List<LanguageLevel> languageLevels = [
+  LanguageLevel(level: 'Temel Seviye(A1-A2)'),
+  LanguageLevel(level: 'Orta Seviye(B1-B2)'),
+  LanguageLevel(level: 'İleri Seviye(C1-C2)'),
+  LanguageLevel(level: 'Anadil'),
+];

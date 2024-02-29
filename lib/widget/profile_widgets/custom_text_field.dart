@@ -30,13 +30,13 @@ class CompCustomTextField extends StatelessWidget {
             Text(
               helperText!,
               textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: 12.0,
-                color: Colors.grey,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontWeight: FontWeight.bold),
             ),
           SizedBox(
-            height: 15, 
+            height: 15,
           ),
           SizedBox(
             height: 45.0,
@@ -46,16 +46,20 @@ class CompCustomTextField extends StatelessWidget {
               inputFormatters: inputFormatters,
               decoration: InputDecoration(
                 hintText: hintText,
+                hintStyle: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide(
-                    color: Colors.grey, 
+                    color: Colors.grey,
                   ),
                 ),
                 prefixIcon: iconData != null
                     ? Icon(iconData, color: Colors.grey)
                     : null,
-                helperText: null, 
+                helperText: null,
               ),
             ),
           ),
@@ -64,5 +68,3 @@ class CompCustomTextField extends StatelessWidget {
     );
   }
 }
-
-

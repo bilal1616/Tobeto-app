@@ -23,10 +23,10 @@ class CustomCityDropdown extends StatelessWidget {
           Text(
             labelText,
             textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 15,
@@ -44,7 +44,13 @@ class CustomCityDropdown extends StatelessWidget {
               items: options.map((CustomCity city) {
                 return DropdownMenuItem<CustomCity>(
                   value: city,
-                  child: Text(city.cityName),
+                  child: Text(
+                    city.cityName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
                 );
               }).toList(),
             ),
@@ -66,8 +72,16 @@ class CustomCity {
 }
 
 List<CustomCity> allCities = [
-  CustomCity(cityName: "İstanbul", districts: ["Beşiktaş", "Kadıköy", "Şişli", "Üsküdar"]),
-  CustomCity(cityName: "Ankara", districts: ["Çankaya", "Kızılay", "Mamak", "Yenimahalle"]),
-  CustomCity(cityName: "Izmir", districts: ["Bornova", "Konak", "Alsancak", "Karşıyaka"]),
-  CustomCity(cityName: "Bursa", districts: ["Osmangazi", "Nilüfer", "Yıldırım", "Gürsu"]),
+  CustomCity(
+      cityName: "İstanbul",
+      districts: ["Beşiktaş", "Kadıköy", "Şişli", "Üsküdar"]),
+  CustomCity(
+      cityName: "Ankara",
+      districts: ["Çankaya", "Kızılay", "Mamak", "Yenimahalle"]),
+  CustomCity(
+      cityName: "Izmir",
+      districts: ["Bornova", "Konak", "Alsancak", "Karşıyaka"]),
+  CustomCity(
+      cityName: "Bursa",
+      districts: ["Osmangazi", "Nilüfer", "Yıldırım", "Gürsu"]),
 ];

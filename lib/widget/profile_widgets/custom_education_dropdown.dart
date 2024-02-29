@@ -23,10 +23,10 @@ class CustomEducationDropdown extends StatelessWidget {
           Text(
             labelText,
             textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 15,
@@ -44,7 +44,13 @@ class CustomEducationDropdown extends StatelessWidget {
               items: options.map((String option) {
                 return DropdownMenuItem<String>(
                   value: option,
-                  child: Text(option),
+                  child: Text(
+                    option,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
                 );
               }).toList(),
             ),
@@ -54,4 +60,3 @@ class CustomEducationDropdown extends StatelessWidget {
     );
   }
 }
-

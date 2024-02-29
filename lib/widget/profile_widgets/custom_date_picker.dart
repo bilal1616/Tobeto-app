@@ -43,10 +43,10 @@ class _DatePickerTextFieldState extends State<DatePickerTextField> {
           Text(
             widget.labelText,
             textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 15,
@@ -74,6 +74,10 @@ class _DatePickerTextFieldState extends State<DatePickerTextField> {
                     ),
                   ),
                   hintText: 'gg/aa/yyyy',
+                  hintStyle: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
             ),

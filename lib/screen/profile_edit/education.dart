@@ -72,10 +72,10 @@ class _EductionTabState extends State<EductionTab> {
                   Text(
                     "Eğitim Durumu",
                     textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.grey,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 15,
@@ -92,7 +92,10 @@ class _EductionTabState extends State<EductionTab> {
                       ),
                       icon: const Icon(Icons.arrow_drop_down),
                       elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                       onChanged: (String? value) {
                         setState(() {
                           _selectedEducation = value!;
@@ -185,10 +188,10 @@ class _EductionTabState extends State<EductionTab> {
                   Text(
                     "Eğitim Durumu",
                     textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.grey,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 15,
@@ -205,7 +208,10 @@ class _EductionTabState extends State<EductionTab> {
                       ),
                       icon: const Icon(Icons.arrow_drop_down),
                       elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                       onChanged: (String? value) {
                         setState(() {
                           _selectedEducation = value!;

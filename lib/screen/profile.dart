@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tobeto_app/screen/profil_edit.dart';
 import 'package:tobeto_app/screen/profile_edit/work_experience.dart';
 import 'package:tobeto_app/widget/reviews_widget/view_report.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late String certificateURL = "";
   // Diğer değişken tanımlamalarınızın altına bu listeyi ekleyin
   List<String> userSkills = [];
-  List<String> socialMediaLinks = [];
+  late List<Map<String, String>> socialMediaLinks = [];
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
     fetchUserEducationData();
     fetchUserSkills();
     fetchUserCertificates();
-    fetchUserSocialMediaData();
+    fetchUserSocialMediaLinks();
     fetchUserLanguageData();
   }
 
@@ -200,36 +201,6 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  Future<void> fetchUserSocialMediaData() async {
-    final String? userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) {
-      print("Kullanıcı girişi yapılmamış.");
-      return;
-    }
-
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final QuerySnapshot socialMediaSnapshot = await firestore
-        .collection('users')
-        .doc(userId)
-        .collection('socialMedia')
-        .get();
-
-    List<String> mediaLinks = [];
-    for (var doc in socialMediaSnapshot.docs) {
-      // 'doc.data()' dönüşümü yaparak 'Map<String, dynamic>' türüne dönüştürüyoruz.
-      Map<String, dynamic> socialMediaData = doc.data() as Map<String, dynamic>;
-      String link = socialMediaData['link'] ?? '';
-      if (link.isNotEmpty) {
-        mediaLinks.add(link);
-      }
-    }
-
-    // Link listesini birleştirip bir string oluşturuyoruz.
-    setState(() {
-      socialMedia = mediaLinks.join('\n');
-    });
-  }
-
   Future<void> fetchUserCertificates() async {
     final String? userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) {
@@ -260,6 +231,109 @@ class _ProfilePageState extends State<ProfilePage> {
     return certificateURL.isNotEmpty
         ? Image.network(certificateURL)
         : Text("Henüz bir sertifika yüklenmedi.");
+  }
+
+  Future<void> fetchUserSocialMediaLinks() async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
+    final QuerySnapshot<Map<String, dynamic>> socialMediaSnapshot =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('socialMedia')
+            .get();
+
+    // Her bir dokümanı Map<String, String> olarak dönüştür
+    List<Map<String, String>> links = socialMediaSnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data();
+      // Veriyi Map<String, String> olarak dönüştür
+      return {
+        "platform":
+            data['platform'] is String ? data['platform'] as String : 'Unknown',
+        "link": data['link'] is String ? data['link'] as String : '',
+      };
+    }).toList();
+
+    setState(() {
+      socialMediaLinks = links;
+    });
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch $url')),
+      );
+    }
+  }
+
+  Widget _buildSocialMediaContainer(
+      String title, List<Map<String, String>> links) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  )),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Container(
+                width: double.infinity,
+                height: 1,
+                color: Colors.black,
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: links.length,
+              itemBuilder: (context, index) {
+                final item = links[index];
+                return ListTile(
+                  title: Text(
+                    item['platform']!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    item['link']!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () => _launchURL(item['link']!),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -346,7 +420,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildContainerWithTitle("Yetkinliklerim", userSkills.join("\n")),
               _buildContainerWithTitle("Yabancı Dillerim", language),
               _buildContainerWithCertificate("Sertifikalarım", certificateURL),
-              _buildContainerWithTitle("Medya Hesaplarım", socialMedia),
+              _buildSocialMediaContainer("Medya Hesaplarım", socialMediaLinks),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Container(

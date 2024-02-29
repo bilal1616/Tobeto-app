@@ -1,32 +1,33 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:tobeto_app/bloc/login_bloc/login_event.dart';
-import 'package:tobeto_app/bloc/login_bloc/login_state.dart';
+import 'dart:async';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
+enum LoginEventType { toggle }
 
-  LoginBloc(this._firebaseAuth, this._googleSignIn) : super(LoginInitial());
+class LoginBloc {
+  bool _isLogin = true;
+  final _eventController = StreamController<LoginEventType>();
+  final _stateController = StreamController<bool>();
 
-  Stream<LoginState> mapEventToState(LoginEvent event) async* {
-    if (event is LoggedOut) {
-      yield* _mapLoggedOutToState(event);
-    }
+  LoginBloc() {
+    _eventController.stream.listen(_mapEventToState);
   }
 
-  Stream<LoginState> _mapLoggedOutToState(LoggedOut event) async* {
-    yield LoginLoading();
-    try {
-      await _firebaseAuth.signOut();
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      if (await googleSignIn.isSignedIn()) {
-        await googleSignIn.signOut();
-      }
-      yield LogoutSuccess();
-    } catch (e) {
-      yield LogoutFailure(e.toString());
+  Stream<bool> get isLoginStream => _stateController.stream;
+
+  bool get isLogin => _isLogin;
+
+  void toggleLogin() {
+    _eventController.sink.add(LoginEventType.toggle);
+  }
+
+  void dispose() {
+    _eventController.close();
+    _stateController.close();
+  }
+
+  void _mapEventToState(LoginEventType event) {
+    if (event == LoginEventType.toggle) {
+      _isLogin = !_isLogin;
+      _stateController.sink.add(_isLogin);
     }
   }
 }

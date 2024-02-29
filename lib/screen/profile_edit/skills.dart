@@ -155,10 +155,10 @@ class _SkillsTabState extends State<SkillsTab> {
                 Text(
                   "Yetkinlikler",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 15,
@@ -175,7 +175,10 @@ class _SkillsTabState extends State<SkillsTab> {
                     ),
                     icon: const Icon(Icons.arrow_drop_down),
                     elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                     onChanged: (String? value) {
                       setState(() {
                         _selectedSkill = value!;

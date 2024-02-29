@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tobeto_app/bloc/login_bloc/login_bloc.dart';
 import 'package:tobeto_app/screen/bottomnavigationbar.dart';
 import 'package:tobeto_app/theme/app_color.dart';
 
@@ -18,16 +19,29 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  var _isLogin = true;
   var _email = '';
   var _password = '';
   var _username = '';
+
+  late final LoginBloc _loginBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _loginBloc = LoginBloc();
+  }
+
+  @override
+  void dispose() {
+    _loginBloc.dispose();
+    super.dispose();
+  }
 
   void _submit() async {
     _formKey.currentState!.save();
 
     try {
-      if (_isLogin) {
+      if (_loginBloc.isLogin) {
         // Giriş sayfası için işlemler
         final userCredentials = await firebaseAuthInstance
             .signInWithEmailAndPassword(email: _email, password: _password);
@@ -162,13 +176,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(imagePath, width: 150, height: 75),
-                        if (!_isLogin)
-                          TextFormField(
-                            decoration: const InputDecoration(
-                                labelText: "Kullanıcı Adı"),
-                            autocorrect: false,
-                            onSaved: (newValue) => _username = newValue!,
-                          ),
+                        StreamBuilder<bool>(
+                          stream: _loginBloc.isLoginStream,
+                          initialData: true,
+                          builder: (context, snapshot) {
+                            return snapshot.data == true
+                                ? SizedBox.shrink()
+                                : TextFormField(
+                                    decoration: const InputDecoration(
+                                        labelText: "Kullanıcı Adı"),
+                                    autocorrect: false,
+                                    onSaved: (newValue) =>
+                                        _username = newValue!,
+                                  );
+                          },
+                        ),
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.005),
                         TextFormField(
@@ -190,11 +212,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: MediaQuery.of(context).size.height * 0.015),
                         ElevatedButton(
                           onPressed: _submit,
-                          child: Text(_isLogin ? "Giriş Yap" : "Kayıt Ol"),
+                          child: Text(_loginBloc.isLogin ? "Giriş Yap" : "Kayıt Ol"),
                         ),
                         TextButton(
-                          onPressed: () => setState(() => _isLogin = !_isLogin),
-                          child: Text(_isLogin
+                          onPressed: () => _loginBloc.toggleLogin(),
+                          child: Text(_loginBloc.isLogin
                               ? "Kayıt Sayfasına Git"
                               : "Giriş Sayfasına Git"),
                         ),

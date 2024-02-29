@@ -86,8 +86,9 @@ class _CatalogState extends State<Catalog> {
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: "Eğitim arayın...",
+                      hintStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                       prefixIcon: Icon(Icons.search),
-                      fillColor: Colors.white,
+                      fillColor: Color.fromARGB(221, 234, 234, 234),
                       filled: true,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(50.0)),
@@ -125,7 +126,13 @@ class _CatalogState extends State<Catalog> {
                   children: [
                     if (pageDocs.isEmpty &&
                         totalCards == 0) // Eğer hiç kart yoksa
-                      Text('Eğitim bulunamadı.'),
+                      Text(
+                        'Eğitim bulunamadı.',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
                     for (var doc in pageDocs)
                       Padding(
                         padding: const EdgeInsets.all(8.0),

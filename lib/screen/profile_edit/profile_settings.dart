@@ -108,10 +108,10 @@ class _ProfilTabState extends State<ProfilTab> {
                   Text(
                     "Şehir",
                     textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.grey,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 15,
@@ -128,7 +128,10 @@ class _ProfilTabState extends State<ProfilTab> {
                       ),
                       icon: const Icon(Icons.arrow_drop_down),
                       elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                       onChanged: (String? value) {
                         setState(() {
                           _selectedCity = value!;
@@ -138,7 +141,13 @@ class _ProfilTabState extends State<ProfilTab> {
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value),
+                          child: Text(
+                            value,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
                         );
                       }).toList(),
                     ),

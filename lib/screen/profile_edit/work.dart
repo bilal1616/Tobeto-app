@@ -101,10 +101,10 @@ class _WorkTabState extends State<WorkTab> {
                   Text(
                     "Şehir",
                     textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.grey,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 15,
@@ -121,7 +121,10 @@ class _WorkTabState extends State<WorkTab> {
                       ),
                       icon: const Icon(Icons.arrow_drop_down),
                       elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                       onChanged: (String? value) {
                         setState(() {
                           _selectedWorkCity = value!;
@@ -131,7 +134,13 @@ class _WorkTabState extends State<WorkTab> {
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value),
+                          child: Text(
+                            value,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
                         );
                       }).toList(),
                     ),
