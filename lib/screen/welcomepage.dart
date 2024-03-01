@@ -15,7 +15,7 @@ class _WelcomePageState extends State<WelcomePage> {
     FirebaseAuth.instance.authStateChanges().first.then((user) {
       if (user != null) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const BottomNavigationBarScreen()));
+            MaterialPageRoute(builder: (context) => BottomNavigationBarScreen()));
       } else {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => LoginScreen()));

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tobeto_app/model/work_experience.dart';
 import 'package:tobeto_app/screen/profil_edit.dart';
-import 'package:tobeto_app/screen/profile_edit/work_experience.dart';
 import 'package:tobeto_app/widget/reviews_widget/view_report.dart';
 import 'package:url_launcher/url_launcher.dart';
 
