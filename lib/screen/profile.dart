@@ -14,6 +14,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool _showBackButton = false; // Geri dönüş butonunu gösterme durumu
+  double _toolbarHeight = 0; // Toolbar height değeri
+
   late String name = "";
   late String surname = "";
   late String birthDate = "";
@@ -43,6 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
     fetchUserCertificates();
     fetchUserSocialMediaLinks();
     fetchUserLanguageData();
+    _toolbarHeight = _showBackButton ? 0 : 30; // Başlangıç değeri
   }
 
   Future<void> fetchUserProfileData() async {
@@ -341,6 +345,22 @@ class _ProfilePageState extends State<ProfilePage> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      appBar: AppBar(
+            toolbarHeight: _toolbarHeight, // Toolbar height değeri
+            leading: _showBackButton
+                ? IconButton(
+                    // Geri dönüş butonunu göster
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      setState(() {
+                        _showBackButton = false; // Geri dönüş butonunu gizle
+                        _toolbarHeight = 30; // Toolbar height değeri sıfırla
+                      });
+                      Navigator.pop(context);
+                    },
+                  )
+                : null,
+          ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
