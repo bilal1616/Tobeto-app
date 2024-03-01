@@ -66,6 +66,10 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
               title: const Text('Tobeto'),
               onTap: () {
                 Navigator.pop(ctx);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
               },
             ),
             ListTile(
@@ -105,7 +109,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
                 Navigator.pop(ctx);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileInformation()),
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
                 );
               },
             ),

@@ -19,11 +19,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeBloc _bloc = HomeBloc();
+  bool _showBackButton = false; // Geri dönüş butonunu gösterme durumu
+  double _toolbarHeight = 0; // Toolbar height değeri
 
   @override
   void initState() {
     super.initState();
     _bloc.getCurrentUser();
+    _toolbarHeight = _showBackButton ? 0 : 30; // Başlangıç değeri
   }
 
   @override
@@ -37,6 +40,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return Scaffold(
+          appBar: AppBar(
+            toolbarHeight: _toolbarHeight, // Toolbar height değeri
+            leading: _showBackButton
+                ? IconButton(
+                    // Geri dönüş butonunu göster
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      setState(() {
+                        _showBackButton = false; // Geri dönüş butonunu gizle
+                        _toolbarHeight = 30; // Toolbar height değeri sıfırla
+                      });
+                      Navigator.pop(context);
+                    },
+                  )
+                : null,
+          ),
           body: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
