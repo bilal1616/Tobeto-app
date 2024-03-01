@@ -8,7 +8,7 @@ import 'package:tobeto_app/screen/catalog.dart';
 import 'package:tobeto_app/screen/floatactionmenu.dart';
 import 'package:tobeto_app/screen/homescreen.dart';
 import 'package:tobeto_app/screen/loginscreen.dart';
-import 'package:tobeto_app/screen/profil_edit.dart';
+
 import 'package:tobeto_app/screen/profile.dart';
 import 'package:tobeto_app/screen/reviews.dart';
 
@@ -22,7 +22,6 @@ class BottomNavigationBarScreen extends StatefulWidget {
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   late BottomNavigationBloc _bloc;
-  int _selectedPageIndex = 0;
 
   final List<Widget> _pages = [
     const HomeScreen(),
