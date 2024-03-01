@@ -1,7 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tobeto_app/bloc/bottomnavigationbar_bloc/bottomnavigationbar_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore eklenmeli
 import 'package:tobeto_app/screen/calendar.dart';
 import 'package:tobeto_app/screen/catalog.dart';
 import 'package:tobeto_app/screen/floatactionmenu.dart';
@@ -15,12 +16,13 @@ class BottomNavigationBarScreen extends StatefulWidget {
   const BottomNavigationBarScreen({Key? key}) : super(key: key);
 
   @override
-  _BottomNavigationBarScreenState createState() => _BottomNavigationBarScreenState();
+  _BottomNavigationBarScreenState createState() =>
+      _BottomNavigationBarScreenState();
 }
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
+  late BottomNavigationBloc _bloc;
   int _selectedPageIndex = 0;
-  String? _username;
 
   final List<Widget> _pages = [
     const HomeScreen(),
@@ -33,42 +35,27 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUsername();
+    _bloc = BottomNavigationBloc();
+    _loadUsername(); // Kullanıcı adını yükle
   }
 
-  void _loadUsername() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userDocSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      String? username;
-      if (userDocSnapshot.exists &&
-          userDocSnapshot.data()!.containsKey('username')) {
-        username = userDocSnapshot.data()!['username'];
-      } else {
-        username = user.displayName;
-      }
-
-      setState(() {
-        _username = username ?? 'Kullanıcı Adı';
-      });
-    }
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
   }
 
   void _selectPage(int index) {
     if (index < 5) {
-      setState(() {
-        _selectedPageIndex = index;
-      });
+      _bloc.mapEventToState(BottomNavigationEvent.SelectPage, index);
     } else {
       _showMoreOptions();
     }
   }
 
   void _showMoreOptions() {
+    _loadUsername(); // Kullanıcı adını yükle
+
     showModalBottomSheet(
       context: context,
       builder: (ctx) {
@@ -83,9 +70,13 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: _username != null
-                  ? Text(_username!)
-                  : const Text("Kullanıcı Adı"),
+              title: StreamBuilder<String?>(
+                stream: _bloc.usernameStream,
+                initialData: 'Kullanıcı Adı',
+                builder: (context, snapshot) {
+                  return Text(snapshot.data ?? 'Kullanıcı Adı');
+                },
+              ),
               onTap: () => _showProfileMenu(ctx),
             ),
             ListTile(
@@ -147,6 +138,28 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     );
   }
 
+  // _BottomNavigationBarScreenState sınıfındaki değişiklikler
+  void _loadUsername() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDocSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      String? username;
+      if (userDocSnapshot.exists &&
+          userDocSnapshot.data()!.containsKey('username')) {
+        username = userDocSnapshot.data()!['username'];
+      } else {
+        username = user.displayName;
+      }
+
+      _bloc.setUsername(
+          username); // Kullanıcı adını _bloc içindeki Stream'e aktar
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode =
@@ -165,41 +178,55 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
           height: 60,
         ),
       ),
-      body: _pages[_selectedPageIndex],
+      body: StreamBuilder<int>(
+        stream: _bloc.selectedPageStream,
+        initialData: 0,
+        builder: (context, snapshot) {
+          return _pages[snapshot.data ?? 0];
+        },
+      ),
       floatingActionButton: const FloatingActionMenuButton(),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: _selectPage,
-        currentIndex: _selectedPageIndex,
-        selectedItemColor: Theme.of(context).iconTheme.color,
-        unselectedItemColor: Theme.of(context).iconTheme.color,
-        selectedLabelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
-        unselectedLabelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: iconColor),
-            label: 'Anasayfa',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star, color: iconColor),
-            label: 'Değerlendirmeler',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: iconColor),
-            label: 'Profil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book, color: iconColor),
-            label: 'Katalog',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today, color: iconColor),
-            label: 'Takvim',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.more_horiz, color: iconColor),
-            label: 'Daha Fazla',
-          ),
-        ],
+      bottomNavigationBar: StreamBuilder<int>(
+        stream: _bloc.selectedPageStream,
+        initialData: 0,
+        builder: (context, snapshot) {
+          return BottomNavigationBar(
+            onTap: _selectPage,
+            currentIndex: snapshot.data ?? 0,
+            selectedItemColor: Theme.of(context).iconTheme.color,
+            unselectedItemColor: Theme.of(context).iconTheme.color,
+            selectedLabelStyle:
+                TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
+            unselectedLabelStyle:
+                TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home, color: iconColor),
+                label: 'Anasayfa',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.star, color: iconColor),
+                label: 'Değerlendirmeler',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person, color: iconColor),
+                label: 'Profil',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.book, color: iconColor),
+                label: 'Katalog',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today, color: iconColor),
+                label: 'Takvim',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.more_horiz, color: iconColor),
+                label: 'Daha Fazla',
+              ),
+            ],
+          );
+        },
       ),
     );
   }

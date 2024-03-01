@@ -5,6 +5,7 @@ class Skill {
 
   Skill({required this.name});
 }
+
 class CustomSkillsDropdown extends StatelessWidget {
   final String labelText;
   final Skill? selectedSkill;
@@ -28,10 +29,10 @@ class CustomSkillsDropdown extends StatelessWidget {
           Text(
             labelText,
             textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 15,
@@ -49,7 +50,13 @@ class CustomSkillsDropdown extends StatelessWidget {
               items: options.map((Skill skill) {
                 return DropdownMenuItem<Skill>(
                   value: skill,
-                  child: Text(skill.name),
+                  child: Text(
+                    skill.name,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
                 );
               }).toList(),
             ),
@@ -61,15 +68,15 @@ class CustomSkillsDropdown extends StatelessWidget {
 }
 
 List<Skill> skills = [
-    Skill(name: 'C#'),
-    Skill(name: 'SQL'),
-    Skill(name: 'Muhasebe'),
-    Skill(name: 'Javascript'),
-    Skill(name: 'Aktif Öğrenme'),
-    Skill(name: 'Aktif Dinleme'),
-    Skill(name: 'Uyum Sağlama'),
-    Skill(name: 'Yönetim ve İdare'),
-    Skill(name: 'Reklam'),
-    Skill(name: 'Algoritmalar'),
-    Skill(name: 'Android'),
-  ];
+  Skill(name: 'C#'),
+  Skill(name: 'SQL'),
+  Skill(name: 'Muhasebe'),
+  Skill(name: 'Javascript'),
+  Skill(name: 'Aktif Öğrenme'),
+  Skill(name: 'Aktif Dinleme'),
+  Skill(name: 'Uyum Sağlama'),
+  Skill(name: 'Yönetim ve İdare'),
+  Skill(name: 'Reklam'),
+  Skill(name: 'Algoritmalar'),
+  Skill(name: 'Android'),
+];

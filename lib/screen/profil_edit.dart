@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:tobeto_app/screen/profile_edit/certificate.dart';
-import 'package:tobeto_app/screen/profile_edit/education.dart';
-import 'package:tobeto_app/screen/profile_edit/language.dart';
-import 'package:tobeto_app/screen/profile_edit/profile_settings.dart';
-import 'package:tobeto_app/screen/profile_edit/settings.dart';
-import 'package:tobeto_app/screen/profile_edit/skills.dart';
-import 'package:tobeto_app/screen/profile_edit/social_media.dart';
-import 'package:tobeto_app/screen/profile_edit/work.dart';
+import 'package:tobeto_app/model/certificate.dart';
+import 'package:tobeto_app/model/education.dart';
+import 'package:tobeto_app/model/language.dart';
+import 'package:tobeto_app/model/profile_settings.dart';
+import 'package:tobeto_app/model/settings.dart';
+import 'package:tobeto_app/model/skills.dart';
+import 'package:tobeto_app/model/social_media.dart';
+import 'package:tobeto_app/model/work.dart';
 
 class ProfileInformation extends StatefulWidget {
   @override

@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tobeto_app/bloc/homescreen_bloc/home_bloc.dart';
 import 'package:tobeto_app/screen/catalog.dart';
 import 'package:tobeto_app/screen/profil_edit.dart';
 import 'package:tobeto_app/screen/reviews.dart';
-// import 'package:google_fonts/google_fonts.dart';
 import 'package:tobeto_app/widget/home_widget/announcementandnews.dart';
 import 'package:tobeto_app/widget/home_widget/applications.dart';
 import 'package:tobeto_app/widget/home_widget/education.dart';
@@ -13,42 +11,25 @@ import 'package:tobeto_app/widget/home_widget/gradient_buttons.dart';
 import 'package:tobeto_app/widget/home_widget/surveys.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _selectedOption = 'Başvurularım';
-  Map<String, bool> visibility = {
-    "Başvurularım": true, // Başlangıçta sadece bu görünür
-    "Eğitimlerim": false,
-    "Duyuru ve Haberlerim": false,
-    "Anketlerim": false,
-  };
-
-  String? _userName; //Kullanıcı adını saklamak için bir değişken
+  final HomeBloc _bloc = HomeBloc();
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser();
+    _bloc.getCurrentUser();
   }
 
-  void _getCurrentUser() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      // Firestore'dan kullanıcı adını al
-      var userData = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-      setState(() {
-        _userName =
-            userData.data()?['username'] ?? user.displayName ?? 'Kullanıcı Adı';
-      });
-    }
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -62,28 +43,29 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    text: "TOBETO",
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: "'ya hoş geldin \n$_userName",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .color),
+                StreamBuilder<String?>(
+                  stream: _bloc.userNameStream,
+                  builder: (context, snapshot) {
+                    return RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text: "TOBETO",
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: "'ya hoş geldin \n${snapshot.data}",
+                            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).textTheme.bodyMedium!.color,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 Text(
@@ -381,36 +363,6 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(8),
           ),
           backgroundColor: bgColor, // Farklı renkler kullanıldı
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOption(BuildContext context, String title) {
-    bool isSelected = _selectedOption == title;
-
-    return InkWell(
-      onTap: () {
-        setState(() {
-          visibility.updateAll((key, value) => false);
-          visibility[title] = true;
-          _selectedOption = title;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        decoration: BoxDecoration(
-          border: isSelected
-              ? Border(bottom: BorderSide(color: Colors.black, width: 2.0))
-              : null,
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge?.color ??
-                Theme.of(context).colorScheme.background,
-            fontSize: 12,
-          ),
         ),
       ),
     );

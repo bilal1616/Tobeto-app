@@ -73,7 +73,11 @@ class _SocialMediaTabState extends State<SocialMediaTab> {
             controller: _socialMediaLinkController,
             decoration: InputDecoration(
               labelText: 'Sosyal Medya Linki',
-              hintText: 'https://example.com',
+              hintText: 'https://',
+              hintStyle: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontWeight: FontWeight.bold),
             ),
           ),
           ElevatedButton(

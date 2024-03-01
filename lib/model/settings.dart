@@ -19,27 +19,47 @@ class _SettingsTabState extends State<SettingsTab> {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<void> _deleteUserAndSubcollections() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      final String userUid = user.uid;
+    bool confirmDelete = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Hesabı Sil"),
+        content: Text("Hesabınızı silmek istediğinize emin misiniz?"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text("Hayır"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text("Evet"),
+          ),
+        ],
+      ),
+    );
 
-      // Firestore'daki kullanıcı verileri ve alt koleksiyonları sil
-      await deleteUserAndSubcollections(userUid);
+    if (confirmDelete != null && confirmDelete) {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        final String userUid = user.uid;
 
-      // Firebase Storage'daki kullanıcı dosyalarını sil
-      await deleteUserStorageFiles(userUid);
+        // Firestore'daki kullanıcı verileri ve alt koleksiyonları sil
+        await deleteUserAndSubcollections(userUid);
 
-      // Kullanıcının Firebase Authentication üyeliğini sil
-      await user.delete();
+        // Firebase Storage'daki kullanıcı dosyalarını sil
+        await deleteUserStorageFiles(userUid);
 
-      // Kullanıcının oturumunu kapat
-      await _auth.signOut();
+        // Kullanıcının Firebase Authentication üyeliğini sil
+        await user.delete();
 
-      // Kullanıcıyı giriş ekranına yönlendir
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-        (Route<dynamic> route) => false,
-      );
+        // Kullanıcının oturumunu kapat
+        await _auth.signOut();
+
+        // Kullanıcıyı giriş ekranına yönlendir
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+          (Route<dynamic> route) => false,
+        );
+      }
     }
   }
 
@@ -125,9 +145,6 @@ class _SettingsTabState extends State<SettingsTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Ayarlar'),
-      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
