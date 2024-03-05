@@ -74,6 +74,7 @@ class _SocialMediaTabState extends State<SocialMediaTab> {
             decoration: InputDecoration(
               labelText: 'Sosyal Medya Linki',
               hintText: 'https://',
+              //counterText: 'https://www.github.com/', değiştirilecek
               hintStyle: Theme.of(context)
                   .textTheme
                   .bodyMedium!
