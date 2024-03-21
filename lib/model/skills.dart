@@ -1,20 +1,9 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_skills_dropdown.dart';
-import 'package:tobeto_app/widget/profile_widgets/custom_socialmedia_dropdown.dart';
 
 
-List<String> educationList = <String>[
-  'Lisans',
-  'Önlisans',
-  'Yüksek Lisans',
-  'Doktora'
-];
-List<String> cityList = <String>['istanbul', 'izmir', 'Ankara', 'Bursa'];
 List<String> skillsList = [
   'C#',
   'Dart / Flutter',
@@ -31,95 +20,18 @@ List<String> skillsList = [
   'Mobil',
 ];
 
-List<String> languageList = <String>[
-  'ingilizce',
-  'almanca',
-  'ispanyolca',
-  'fransızca'
-];
-List<String> languageLevelList = <String>[
-  'Temel Seviye(A1-A2)',
-  'Orta Seviye(B1-B2)',
-  'İleri Seviye(C1-C2)',
-  'Anadil'
-];
-
 class SkillsTab extends StatefulWidget {
   @override
   _SkillsTabState createState() => _SkillsTabState();
 }
 
 class _SkillsTabState extends State<SkillsTab> {
-  File? _image;
-  File? _selectedFile;
-
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path!);
-      });
-    }
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
 
   @override
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _surnameController = TextEditingController();
-  TextEditingController _tcController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _countryController = TextEditingController();
-  TextEditingController _districtController = TextEditingController();
-  TextEditingController _socialMediaController = TextEditingController();
-  TextEditingController _oldPasswordController = TextEditingController();
-  TextEditingController _newPasswordController = TextEditingController();
-  TextEditingController _newPasswordAgainController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _birthDateController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-
-  TextEditingController _startWorkDateController = TextEditingController();
-
-  TextEditingController _endWorkDateController = TextEditingController();
-
-  TextEditingController _companyController = TextEditingController();
-  TextEditingController _positionController = TextEditingController();
-  TextEditingController _sectorController = TextEditingController();
-
-  TextEditingController _universityController = TextEditingController();
-  TextEditingController _sectionController = TextEditingController();
-
-  TextEditingController _startEducationDateController = TextEditingController();
-
-  TextEditingController _graduateDateController = TextEditingController();
-
-  DateTime? _selectedBirthDate;
-  DateTime? _selectedStartEducationDate;
-  DateTime? _selectedEndEducationDate;
-  String _selectedEducation = educationList.first;
 
   String _selectedSkill = skillsList.first;
 
-  String _selectedCity = cityList.first;
-
-  String _selectedWorkCity = cityList.first;
-  String _selectedLanguage = languageList.first;
-  String _selectedLanguageLevel = languageLevelList.first;
-
   Skill? selectedSkill;
-  SocialMedia? selectedMedia;
 
   final CollectionReference workCollection =
       FirebaseFirestore.instance.collection('work');
@@ -229,7 +141,7 @@ class _SkillsTabState extends State<SkillsTab> {
 
     // `skills` yerine, `users` koleksiyonu altındaki `userId` ile belirtilen kullanıcıya ve onun `skills` alt koleksiyonuna erişim sağla
     await firestore.collection('users').doc(userId).collection('skills').add({
-      'skill': _selectedSkill,
+      'skills': _selectedSkill,
     });
 
     // Başarılı kayıt sonrası kullanıcıyı önceki sayfaya yönlendir

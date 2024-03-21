@@ -13,7 +13,6 @@ List<String> educationList = <String>[
   'Yüksek Lisans',
   'Doktora'
 ];
-List<String> cityList = <String>['istanbul', 'izmir', 'Ankara', 'Antalya'];
 
 class EductionTab extends StatefulWidget {
   @override
@@ -32,8 +31,6 @@ class _EductionTabState extends State<EductionTab> {
   DateTime? _selectedStartEducationDate;
   DateTime? _selectedEndEducationDate;
   String _selectedEducation = educationList.first;
-
-  String _selectedCity = cityList.first;
 
   Skill? selectedSkill;
   SocialMedia? selectedMedia;

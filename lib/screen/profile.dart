@@ -32,6 +32,8 @@ class _ProfilePageState extends State<ProfilePage> {
   // Diğer değişken tanımlamalarınızın altına bu listeyi ekleyin
   List<String> userSkills = [];
   late List<Map<String, String>> socialMediaLinks = [];
+  // Sınıfın üstünde bir state değişkeni olarak tanımlayın
+  List<WorkExperience> workExperiences = [];
 
   @override
   void initState() {
@@ -91,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
     List<String> fetchedSkills = [];
     for (var doc in skillSnapshot.docs) {
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      String skill = data['skill'] ?? 'Bilinmeyen Yetenek';
+      String skill = data['skills'] ?? 'Bilinmeyen Yetenek';
       fetchedSkills.add(skill);
     }
 
@@ -101,8 +103,6 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  List<WorkExperience> workExperiences =
-      []; // Sınıfın üstünde bir state değişkeni olarak tanımlayın
   Future<void> fetchUserWorkData() async {
     try {
       final String? userId = FirebaseAuth.instance.currentUser?.uid;
@@ -128,7 +128,8 @@ class _ProfilePageState extends State<ProfilePage> {
         workExperiences = newWorkExperiences;
         // Her bir iş deneyimi için detaylı bir açıklama oluştur
         work = workExperiences
-            .map((e) => '${e.position}\n${e.sector}\n${e.company}\n${e.city}')
+            .map((e) =>
+                '${e.company}\n${e.position}\n${e.sector}\n${e.startDate}\n${e.endDate}\n${e.city}\n${e.description}')
             .join('');
       });
     } catch (e) {
@@ -269,73 +270,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Widget _buildSocialMediaContainer(
-      String title, List<Map<String, String>> links) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Container(
-                width: double.infinity,
-                height: 1,
-                color: Colors.black,
-              ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: links.length,
-              itemBuilder: (context, index) {
-                final item = links[index];
-                return ListTile(
-                  title: Text(
-                    item['platform']!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    item['link']!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  onTap: () => _launchURL(item['link']!),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -349,74 +283,101 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildIcons(),
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Container(
-                  height: screenHeight / 1.1,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: screenHeight / 4,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).primaryColorDark,
-                              Theme.of(context).primaryColor,
-                            ],
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
                           ),
+                        ],
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: screenHeight / 4,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Theme.of(context).primaryColor,
+                                  Theme.of(context).primaryColorDark,
+                                  Theme.of(context).primaryColor,
+                                ],
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: profilePictureURL.isNotEmpty
+                                  ? CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        profilePictureURL,
+                                      ),
+                                    )
+                                  : CircleAvatar(
+                                      backgroundColor: Color(0xFF41528f),
+                                      radius: 80,
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 80,
+                                        color: Color(0xFF9e91f0),
+                                      )),
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          _buildPersonalInfo("Ad Soyad", "$name $surname",
+                              "assets/cv-name.png"),
+                          SizedBox(height: 10),
+                          _buildPersonalInfo(
+                              "Doğum Tarihi", birthDate, "assets/cv-date.png"),
+                          SizedBox(height: 10),
+                          _buildPersonalInfo(
+                              "E-mail", email, "assets/cv-mail.png"),
+                          SizedBox(height: 10),
+                          _buildPersonalInfo(
+                              "Telefon", phone, "assets/cv-phone.png"),
+                          _buildPersonalInfo("Şehir", city, "assets/city.png"),
+                          _buildPersonalInfo(
+                              "Ülke", country, "assets/country.png"),
+                          _buildPersonalInfo(
+                              "TC Kimlik No", tc, "assets/tc.png"),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 210,
+                      right: 10,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Silme işlemi için onay modalı göster
+                          _showDeleteConfirmationModal();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: profilePictureURL.isNotEmpty
-                              ? CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    profilePictureURL,
-                                  ),
-                                )
-                              : CircleAvatar(
-                                  backgroundColor: Color(0xFF41528f),
-                                  radius: 80,
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 80,
-                                    color: Color(0xFF9e91f0),
-                                  )),
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete), // Silme ikonu
+                            SizedBox(width: 3), // İkon ile metin arasına boşluk
+                            Text('Bilgileri Sil'),
+                          ],
                         ),
                       ),
-                      _buildPersonalInfo(
-                          "Ad Soyad", "$name $surname", "assets/cv-name.png"),
-                      SizedBox(height: 10),
-                      _buildPersonalInfo(
-                          "Doğum Tarihi", birthDate, "assets/cv-date.png"),
-                      SizedBox(height: 10),
-                      _buildPersonalInfo("E-mail", email, "assets/cv-mail.png"),
-                      SizedBox(height: 10),
-                      _buildPersonalInfo(
-                          "Telefon", phone, "assets/cv-phone.png"),
-                      _buildPersonalInfo("Şehir", city, "assets/city.png"),
-                      _buildPersonalInfo("Ülke", country, "assets/country.png"),
-                      _buildPersonalInfo("TC Kimlik No", tc, "assets/tc.png"),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              _buildContainerWithTitle("Hakkımda",
-                  "$name $surname\n$birthDate\n$email\n$city\n$country"),
               _buildContainerWithTitle("Yetkinliklerim", userSkills.join("\n")),
               _buildContainerWithTitle("Yabancı Dillerim", language),
               _buildContainerWithCertificate("Sertifikalarım", certificateURL),
@@ -424,8 +385,6 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Container(
-                  height: screenHeight / 4.5,
-                  width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
@@ -472,22 +431,23 @@ class _ProfilePageState extends State<ProfilePage> {
                             Text(
                                 "İşte Başarı Modeli değerlendirmesiyle Yetkinliklerini Ölç "),
                             ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.purple,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.purple,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ViewReport()),
+                                );
+                              },
+                              child: Text(
+                                'Başla',
+                                style: TextStyle(
+                                  color: Colors.white,
                                 ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ViewReport()),
-                                  );
-                                },
-                                child: Text(
-                                  'Başla',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                )),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -537,205 +497,661 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildPersonalInfo(String name, String email, String assetPath) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        assetPath,
+                        height: 30,
+                        width: 30,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          email,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-              child: Image.asset(assetPath),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showDeleteConfirmationModal() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Bilgiyi Sil"),
+          content: Text("Profil bilgilerini silmek istediğinize emin misiniz?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Hayır",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Silme işlemini gerçekleştir
+                _deleteProfileInfo();
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Evet",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteProfileInfo() async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      print("Kullanıcı girişi yapılmamış.");
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('profiles')
+          .doc('mainProfile')
+          .delete(); // Tüm ana profil belgesini sil
+
+      // Bilgi başarıyla silindiğinde UI'ı güncelle
+      setState(() {
+        // Tüm alanları boşalt
+        name = '';
+        surname = '';
+        birthDate = '';
+        email = '';
+        phone = '';
+        city = '';
+        country = '';
+        tc = '';
+        profilePictureURL = '';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Profil bilgileri başarıyla silindi.")),
+      );
+    } catch (e) {
+      print("Hata oluştu: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Profil bilgileri silinirken bir hata oluştu.")),
+      );
+    }
+  }
+
+  Widget _buildContainerWithTitle(String title, String subtitle) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Silme işlemi için onay modalı göster
+                    _showDeleteConfirmationModalAll(title);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(Icons.delete), // Silme ikonu
+                      SizedBox(width: 3), // İkon ile metin arasına boşluk
+                      Text('Bilgileri Sil'),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                email,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 1,
+                    color: Colors.black,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    subtitle,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContainerWithTitle(String title, String subtitle) {
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Container(
-        height: screenHeight / 5,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3),
-            ),
-          ],
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+  void _showDeleteConfirmationModalAll(String fieldName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Bilgiyi Sil"),
+          content:
+              Text("'$fieldName' bilgisini silmek istediğinize emin misiniz?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: Text(
-                title,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
+                "Hayır",
+                style: TextStyle(color: Colors.black),
               ),
             ),
-            SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Container(
-                width: double.infinity,
-                height: 1,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            TextButton(
+              onPressed: () {
+                _deleteProfileInfoAll(fieldName);
+                Navigator.of(context).pop();
+              },
               child: Text(
-                subtitle,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
+                "Evet",
+                style: TextStyle(color: Colors.red),
               ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildContainerWithAsset() {
-    double screenHeight = MediaQuery.of(context).size.height;
+  Future<void> _deleteProfileInfoAll(String fieldName) async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      print("Kullanıcı girişi yapılmamış.");
+      return;
+    }
 
+    try {
+      // Silinecek alanın collection içindeki belirli bir dokümanını silebilirsiniz
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection(fieldName == 'Yetkinliklerim'
+              ? 'skills'
+              : fieldName == 'Yabancı Dillerim'
+                  ? 'languages'
+                  : fieldName == 'Eğitim Hayatı'
+                      ? 'education'
+                      : 'workExperiences')
+          .get()
+          .then((snapshot) {
+        for (DocumentSnapshot doc in snapshot.docs) {
+          doc.reference.delete();
+        }
+      });
+
+      // Bilgi başarıyla silindiğinde UI'ı güncelle
+      setState(() {
+        if (fieldName == 'Hakkımda') {
+          // Silme işlemi yapmak istemiyorsanız bu bloğu silebilirsiniz
+        } else if (fieldName == 'Yetkinliklerim') {
+          userSkills.clear();
+        } else if (fieldName == 'Yabancı Dillerim') {
+          language = '';
+        } else if (fieldName == 'Eğitim Hayatı') {
+          education = '';
+        } else if (fieldName == 'Deneyimlerim') {
+          workExperiences.clear();
+          work = '';
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("'$fieldName' bilgisi başarıyla silindi.")),
+      );
+    } catch (e) {
+      print("Hata oluştu: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("'$fieldName' bilgisi silinirken bir hata oluştu.")),
+      );
+    }
+  }
+
+  Widget _buildContainerWithAsset() {
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: Container(
-          height: screenHeight / 5,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3),
-              ),
-            ],
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset('assets/rozet1.jpg'),
-                SizedBox(width: 20),
-                Image.asset('assets/rozet2.jpg'),
-              ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              "Ödüllerim",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontWeight: FontWeight.bold),
             ),
-          )),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/rozet1.jpg', height: 125, width: 150),
+                  SizedBox(width: 20),
+                  Image.asset('assets/rozet2.jpg', height: 125, width: 150),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildContainerWithCertificate(String title, String certificateURL) {
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: Container(
-        height: screenHeight / 6,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3),
-            ),
-          ],
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Container(
-                width: double.infinity,
-                height: 1,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 5),
-            certificateURL.isNotEmpty
-                ? Center(
-                    child: Container(
-                      height: screenHeight / 10,
-                      child: Image.network(
-                        certificateURL,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                : Center(
-                    child: Text("Henüz bir sertifika eklemediniz."),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
                   ),
-          ],
-        ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Silme işlemi için onay modalı göster
+                    _showDeleteConfirmationModalCertificate(title);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(Icons.delete), // Silme ikonu
+                      SizedBox(width: 3), // İkon ile metin arasına boşluk
+                      Text('Bilgileri Sil'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 5),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 1,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  certificateURL.isNotEmpty
+                      ? Center(
+                          child: Container(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height / 6,
+                            child: Image.network(
+                              certificateURL,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Text("Henüz bir sertifika eklemediniz."),
+                        ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  void _showDeleteConfirmationModalCertificate(String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Sertifika Sil"),
+          content:
+              Text("'$title' sertifikasını silmek istediğinize emin misiniz?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Hayır",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                _deleteCertificate(title);
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Evet",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteCertificate(String title) async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      print("Kullanıcı girişi yapılmamış.");
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('certificates')
+          .where('title', isEqualTo: title)
+          .get()
+          .then((snapshot) {
+        for (DocumentSnapshot doc in snapshot.docs) {
+          doc.reference.delete();
+        }
+      });
+
+      // Bilgi başarıyla silindiğinde UI'ı güncelle
+      setState(() {
+        certificateURL = ''; // Sertifika URL'sini temizle
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("'$title' sertifikası başarıyla silindi.")),
+      );
+    } catch (e) {
+      print("Hata oluştu: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("'$title' sertifikası silinirken bir hata oluştu.")),
+      );
+    }
+  }
+
+  Widget _buildSocialMediaContainer(
+      String title, List<Map<String, String>> links) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Silme işlemi için onay modalı göster
+                    _showDeleteConfirmationModalSocial(title);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(Icons.delete), // Silme ikonu
+                      SizedBox(width: 3), // İkon ile metin arasına boşluk
+                      Text('Bilgileri Sil'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Container(
+              width: double.infinity,
+              height: 1,
+              color: Colors.black,
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: links.map((link) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                child: ListTile(
+                  title: Text(
+                    link['platform']!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    link['link']!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () => _launchURL(link['link']!),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteConfirmationModalSocial(String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Hesap Sil"),
+          content: Text("'$title' hesabını silmek istediğinize emin misiniz?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Hayır",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                _deleteSocialMediaAccount(title);
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Evet",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteSocialMediaAccount(String title) async {
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      print("Kullanıcı girişi yapılmamış.");
+      return;
+    }
+
+    try {
+      // Firebase'deki tüm sosyal medya hesaplarını sil
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('socialMedia')
+          .get()
+          .then((snapshot) {
+        for (DocumentSnapshot doc in snapshot.docs) {
+          doc.reference.delete();
+        }
+      });
+
+      // UI güncelleme ve liste boşaltma
+      setState(() {
+        socialMediaLinks.clear();
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Tüm hesaplar başarıyla silindi.")),
+      );
+    } catch (e) {
+      print("Hata oluştu: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Hesaplar silinirken bir hata oluştu.")),
+      );
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tobeto_app/screen/bottomnavigationbar.dart';
 import 'package:tobeto_app/screen/loginscreen.dart';
 
@@ -11,16 +12,37 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  @override
+  void initState() {
+    super.initState();
+    _checkWelcomeScreenVisibility();
+  }
+
+  void _checkWelcomeScreenVisibility() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool showWelcomeScreen = prefs.getBool('showWelcomeScreen') ?? true;
+    if (!showWelcomeScreen) {
+      _navigateToNextScreen();
+    }
+  }
+
   void _navigateToNextScreen() {
     FirebaseAuth.instance.authStateChanges().first.then((user) {
       if (user != null) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => BottomNavigationBarScreen()));
+          MaterialPageRoute(builder: (context) => BottomNavigationBarScreen()),
+        );
       } else {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => LoginScreen()));
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
       }
     });
+  }
+
+  void _updateWelcomeScreenVisibility() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('showWelcomeScreen', false);
   }
 
   @override
@@ -41,7 +63,10 @@ class _WelcomePageState extends State<WelcomePage> {
             top: 75,
             child: Center(
               child: ElevatedButton(
-                onPressed: _navigateToNextScreen,
+                onPressed: () {
+                  _navigateToNextScreen();
+                  _updateWelcomeScreenVisibility();
+                },
                 child: Text(
                   "Hadi Başlayalım",
                   style: TextStyle(fontSize: 16),
