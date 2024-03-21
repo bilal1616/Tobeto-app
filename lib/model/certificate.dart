@@ -54,8 +54,8 @@ class _CertificateTabState extends State<CertificateTab> {
         'certificateURL': downloadURL,
         'uploadedAt': Timestamp.now(),
       });
-    }).catchError((error) {
-      print("Sertifika yükleme hatası: $error");
+    }).catchError((e) {
+      print("Sertifika yükleme hatası: $e");
     });
 
     // Başarılı kayıt sonrası kullanıcıyı önceki sayfaya yönlendir

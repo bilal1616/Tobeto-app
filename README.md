@@ -1,9 +1,7 @@
 
 # tobeto_app
 
-İstanbul Kodluyor eğitimi Tobeto Mobil Uygulaması
-
-## Katkı Sağlayanlar
+İstanbul Kodluyor Projesi Tobeto Mobil Uygulaması
 
 ## Renk Referansı
 
@@ -25,4 +23,3 @@
 <img src="assets/03.png" height ="400">
 <br/>
 <img src="assets/04.png" height ="400">
-

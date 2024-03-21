@@ -44,7 +44,8 @@ class _SocialMediaTabState extends State<SocialMediaTab> {
         .collection('socialMedia')
         .add({
       'platform': selectedMedia?.name,
-      'link': _socialMediaLinkController.text,
+      'link':
+          'https://www.${selectedMedia?.name.toLowerCase()}.com/${_socialMediaLinkController.text}',
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -58,6 +59,7 @@ class _SocialMediaTabState extends State<SocialMediaTab> {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CustomSocialMediaDropdown(
             labelText: 'Sosyal Medya Seçiniz',
@@ -69,18 +71,22 @@ class _SocialMediaTabState extends State<SocialMediaTab> {
               });
             },
           ),
-          TextField(
+          SizedBox(height: 20),
+          TextFormField(
             controller: _socialMediaLinkController,
             decoration: InputDecoration(
-              labelText: 'Sosyal Medya Linki',
-              hintText: 'https://',
-              //counterText: 'https://www.github.com/', değiştirilecek
+              labelText: 'Sosyal Medya Kullanıcı Adı',
+              hintText: 'Kullanıcı Adı',
+              prefixText:
+                  'https://www.${selectedMedia?.name.toLowerCase()}.com/',
               hintStyle: Theme.of(context)
                   .textTheme
                   .bodyMedium!
                   .copyWith(fontWeight: FontWeight.bold),
+              border: OutlineInputBorder(),
             ),
           ),
+          SizedBox(height: 20),
           ElevatedButton(
             onPressed: _saveSocialMediaToFirestore,
             child: Text('Kaydet'),

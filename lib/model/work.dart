@@ -1,9 +1,6 @@
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_date_picker.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_skills_dropdown.dart';
 import 'package:tobeto_app/widget/profile_widgets/custom_socialmedia_dropdown.dart';
@@ -23,40 +20,9 @@ class WorkTab extends StatefulWidget {
 }
 
 class _WorkTabState extends State<WorkTab> {
-  File? _image;
-  File? _selectedFile;
-
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path!);
-      });
-    }
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
-
-  @override
-  TextEditingController _emailController = TextEditingController();
-
   TextEditingController _descriptionController = TextEditingController();
-
   TextEditingController _startWorkDateController = TextEditingController();
-
   TextEditingController _endWorkDateController = TextEditingController();
-
   TextEditingController _companyController = TextEditingController();
   TextEditingController _positionController = TextEditingController();
   TextEditingController _sectorController = TextEditingController();
@@ -65,6 +31,7 @@ class _WorkTabState extends State<WorkTab> {
   Skill? selectedSkill;
   SocialMedia? selectedMedia;
 
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -76,7 +43,7 @@ class _WorkTabState extends State<WorkTab> {
               obscureText: false,
               controller: _companyController,
               helperText: 'Kurum Adı',
-              hintText: 'Kampüs 365',
+              hintText: 'Tobeto',
             ),
             CompCustomTextField(
               obscureText: false,
@@ -219,7 +186,7 @@ class _WorkTabState extends State<WorkTab> {
       // Diğer alanlar buraya eklenebilir
     });
 
-    // Başarılı kayıt sonrası kullanıcıyı önceki sayfaya yönlendir
+    // Yeni iş deneyimi eklendiğinde, kullanıcının profili yenilensin
     Navigator.pop(context, true);
   }
 }
