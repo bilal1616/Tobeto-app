@@ -38,7 +38,6 @@ class _ReviewsExamState extends State<ReviewsExam> {
         questions.add(question);
       });
 
-      // setState ile yeniden çizilmesini sağla
       setState(() {});
     } catch (e) {
       print('Error fetching questions: $e');
