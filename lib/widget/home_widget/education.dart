@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tobeto_app/widget/home_widget/education_video_player.dart';
+import 'package:tobeto_app/model/education_video_player.dart';
 
 class SearchField extends StatefulWidget {
   final Function(String) onTextChanged;
