@@ -118,7 +118,7 @@ class _ViewReportState extends State<ViewReport> {
           SizedBox(width: MediaQuery.of(context).size.height * 0.02),
           Text(
             description,
-            style: TextStyle(fontSize: 15),
+            style: TextStyle(fontSize: 14),
           ),
         ],
       ),

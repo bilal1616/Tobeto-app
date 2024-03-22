@@ -39,7 +39,15 @@ class _VideoAppState extends State<VideoApp> {
       appBar: AppBar(title: Text(widget.title)),
       body: Stack(
         children: [
-          // Video oynatıcı ve kontrolleri
+          // Arka plan resmi
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/videoback.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           GestureDetector(
             onTap: () => setState(() => _isControlVisible = !_isControlVisible),
             child: Stack(
