@@ -28,5 +28,7 @@
 </div>
 
 ## Home Page
+<div class="row">
 <img src="assets/readme/home1.png" height ="400">
 <img src="assets/readme/home2.png" height ="400">
+</div>
