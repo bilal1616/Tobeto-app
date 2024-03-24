@@ -162,8 +162,8 @@
 ## Float Action Button (FAB Menü)
 </br>
 <div class="row">
-<img src="assets/readme/fab1.png" height ="400">
-<img src="assets/readme/fab2.png" height ="400">
+<img src="assets/readme/fab1.png" height ="250">
+<img src="assets/readme/fab2.png" height ="250">
 </div>
 
 
