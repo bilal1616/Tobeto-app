@@ -19,7 +19,10 @@
 <br/>
 
 ## Welcome Page (Splash Ekranı)
+</br>
 <img src="assets/readme/welcome.png" height ="400">
+
+</br>
 
 ## Register - Login Page / Google Auth Page (Kayıt-Giriş Ekranı)
 </br>
@@ -29,12 +32,16 @@
 <img src="assets/readme/googleauth.png" height ="400">
 </div>
 
+</br>
+
 ## Home Page (Ana Sayfa)
 </br>
 <div class="row">
 <img src="assets/readme/home1.png" height ="400">
 <img src="assets/readme/home2.png" height ="400">
 </div>
+
+</br>
 
 ## Home Page / Information menu (Anasayfa-Bilgilendirme Menüleri)
 - Başvurularım
@@ -74,6 +81,8 @@
 <img src="assets/readme/sınav2.png" height ="400">
 </div>
 
+</br>
+
 ## Reviews Page (Değerlendirmeler Sayfası)
 </br>
 <div class="row">
@@ -99,6 +108,8 @@
 <img src="assets/readme/exam4.png" height ="400">
 </div>
 
+</br>
+
 ## Profile Page (Profil Sayfası)
 </br>
 <div class="row">
@@ -106,6 +117,8 @@
 <img src="assets/readme/profil2.png" height ="400">
 <img src="assets/readme/profil3.png" height ="400">
 </div>
+
+</br>
 
 ## Profile Edit Page (Profil Düzenleme Sayfası)
 </br>
