@@ -2,7 +2,7 @@
 # tobeto_app
 
 ## Proje Tanıtımı
-- Eğitim içerikleri bulunan, kişisel gelişim odaklı bir platform olan Tobeto'nun mobil uygulama prototipidir.
+- Kullanıcıya eğitim içerikleri sunan kişisel gelişim odaklı bir platform olan Tobeto'nun mobil uygulama prototipidir.
 
 ## Renk Referansı
 
