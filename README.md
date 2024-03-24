@@ -21,9 +21,11 @@
 <img src="assets/readme/welcome.png" height ="400">
 
 ## Login - Register Page / Google auth Page
+<div class="row">
 <img src="assets/readme/register.png" height ="400">
 <img src="assets/readme/login.png" height ="400">
 <img src="assets/readme/googleauth.png" height ="400">
+</div>
 
 ## Home Page
 <img src="assets/readme/home1.png" height ="400">
