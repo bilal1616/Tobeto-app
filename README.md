@@ -2,7 +2,7 @@
 # tobeto_app
 
 ## Proje Tanıtımı
-- İstanbul Kodluyor Projesi, eğitim ve kişisel gelişim odaklı bir platform olan Tobeto'nun mobil uygulama prototipi.
+- Eğitim içerikleri bulunan, kişisel gelişim odaklı bir platform olan Tobeto'nun mobil uygulama prototipidir.
 
 ## Renk Referansı
 
