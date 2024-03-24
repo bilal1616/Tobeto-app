@@ -40,17 +40,20 @@
 <img src="assets/readme/basvuru.png" height ="400">
 </div>
 
+</br>
 - Duyuru ve Haberlerim
 <div class="row">
 <img src="assets/readme/duyuru1.png" height ="400">
 <img src="assets/readme/duyuru2.png" height ="400">
 </div>
 
+</br>
 - Anketlerim
 <div class="row">
 <img src="assets/readme/anket.png" height ="400">
 </div>
 
+</br>
 - Eğitimlerim
 <div class="row">
 <img src="assets/readme/egitim1.png" height ="400">
@@ -73,11 +76,13 @@
 <img src="assets/readme/degerlendir3.png" height ="400">
 </div>
 
+</br>
 - Rapor Sayfası
 <div class="row">
 <img src="assets/readme/rapor.png" height ="400">
 </div>
 
+</br>
 - Sınav Sayfası
 <div class="row">
 <img src="assets/readme/exam1.png" height ="400">
