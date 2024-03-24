@@ -172,7 +172,7 @@
 # More (Daha Fazla Göster)
 </br>
 <div class="row">
-<img src="assets/readme/more1.png" height ="400">
+<img src="assets/readme/more1.png" height ="200">
 <img src="assets/readme/more2.png" height ="400">
 <img src="assets/readme/more3.png" height ="400">
 </div>
