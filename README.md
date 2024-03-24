@@ -16,7 +16,15 @@
 
 ## Ekran Görüntüleri
 <br/>
-<img src="assets/readme/" height ="400">
-<img src="assets/readme/" height ="400">
-<img src="assets/readme/" height ="400">
-<img src="assets/readme/" height ="400">
+
+## Welcome Page
+<img src="assets/readme/welcome.png" height ="400">
+
+## Login - Register Page / Google auth Page
+<img src="assets/readme/register.png" height ="400">
+<img src="assets/readme/login.png" height ="400">
+<img src="assets/readme/googleauth.png" height ="400">
+
+## Home Page
+<img src="assets/readme/home1.png" height ="400">
+<img src="assets/readme/home2.png" height ="400">
