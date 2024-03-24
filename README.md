@@ -21,7 +21,7 @@
 ## Welcome Page (Splash Ekranı)
 <img src="assets/readme/welcome.png" height ="400">
 
-## Register - Login Page / Google auth Page (Kayıt-Giriş Ekranı)
+## Register - Login Page / Google Auth Page (Kayıt-Giriş Ekranı)
 <div class="row">
 <img src="assets/readme/register.png" height ="400">
 <img src="assets/readme/login.png" height ="400">
@@ -34,13 +34,14 @@
 <img src="assets/readme/home2.png" height ="400">
 </div>
 
-## Home Page / informations menu (Anasayfa-Bilgilendirme Menüleri)
+## Home Page / Informations menu (Anasayfa-Bilgilendirme Menüleri)
 - Başvurularım
 <div class="row">
 <img src="assets/readme/basvuru.png" height ="400">
 </div>
 
 </br>
+
 - Duyuru ve Haberlerim
 <div class="row">
 <img src="assets/readme/duyuru1.png" height ="400">
@@ -48,12 +49,14 @@
 </div>
 
 </br>
+
 - Anketlerim
 <div class="row">
 <img src="assets/readme/anket.png" height ="400">
 </div>
 
 </br>
+
 - Eğitimlerim
 <div class="row">
 <img src="assets/readme/egitim1.png" height ="400">
@@ -77,12 +80,14 @@
 </div>
 
 </br>
+
 - Rapor Sayfası
 <div class="row">
 <img src="assets/readme/rapor.png" height ="400">
 </div>
 
 </br>
+
 - Sınav Sayfası
 <div class="row">
 <img src="assets/readme/exam1.png" height ="400">
