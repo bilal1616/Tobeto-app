@@ -17,23 +17,23 @@
 ## Ekran Görüntüleri
 <br/>
 
-## Welcome Page
+## Welcome Page (Splash Ekranı)
 <img src="assets/readme/welcome.png" height ="400">
 
-## Login - Register Page / Google auth Page
+## Register - Login Page / Google auth Page (Kayıt-Giriş Ekranı)
 <div class="row">
 <img src="assets/readme/register.png" height ="400">
 <img src="assets/readme/login.png" height ="400">
 <img src="assets/readme/googleauth.png" height ="400">
 </div>
 
-## Home Page
+## Home Page (Ana Sayfa)
 <div class="row">
 <img src="assets/readme/home1.png" height ="400">
 <img src="assets/readme/home2.png" height ="400">
 </div>
 
-## Home Page / information menu
+## Home Page / information menu (Ansasyfa-Bilgilendirme Menü)
 - Başvurularım
 <div class="row">
 <img src="assets/readme/basvuru.png" height ="400">
@@ -58,9 +58,29 @@
 <img src="assets/readme/egitim4.png" height ="400">
 </div>
 
-## Home Page / exams menu
+## Home Page / exams menu (Ansayfa-Sınavlarım Menü)
 - Sınavlarım
 <div class="row">
 <img src="assets/readme/sınav1.png" height ="400">
 <img src="assets/readme/sınav2.png" height ="400">
+</div>
+
+## Reviews Page (Değerlendirmeler Sayfası)
+<div class="row">
+<img src="assets/readme/degerlendir1.png" height ="400">
+<img src="assets/readme/degerlendir2.png" height ="400">
+<img src="assets/readme/degerlendir3.png" height ="400">
+</div>
+
+- Rapor Sayfası
+<div class="row">
+<img src="assets/readme/rapor.png" height ="400">
+</div>
+
+- Sınav Sayfası
+<div class="row">
+<img src="assets/readme/exam1.png" height ="400">
+<img src="assets/readme/exam2.png" height ="400">
+<img src="assets/readme/exam3.png" height ="400">
+<img src="assets/readme/exam4.png" height ="400">
 </div>
