@@ -34,7 +34,7 @@
 <img src="assets/readme/home2.png" height ="400">
 </div>
 
-## Home Page / Informations menu (Anasayfa-Bilgilendirme Menüleri)
+## Home Page / Information menu (Anasayfa-Bilgilendirme Menüleri)
 - Başvurularım
 <div class="row">
 <img src="assets/readme/basvuru.png" height ="400">
