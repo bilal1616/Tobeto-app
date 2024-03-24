@@ -22,6 +22,7 @@
 <img src="assets/readme/welcome.png" height ="400">
 
 ## Register - Login Page / Google Auth Page (Kayıt-Giriş Ekranı)
+</br>
 <div class="row">
 <img src="assets/readme/register.png" height ="400">
 <img src="assets/readme/login.png" height ="400">
@@ -29,6 +30,7 @@
 </div>
 
 ## Home Page (Ana Sayfa)
+</br>
 <div class="row">
 <img src="assets/readme/home1.png" height ="400">
 <img src="assets/readme/home2.png" height ="400">
@@ -73,6 +75,7 @@
 </div>
 
 ## Reviews Page (Değerlendirmeler Sayfası)
+</br>
 <div class="row">
 <img src="assets/readme/degerlendir1.png" height ="400">
 <img src="assets/readme/degerlendir2.png" height ="400">
@@ -94,4 +97,25 @@
 <img src="assets/readme/exam2.png" height ="400">
 <img src="assets/readme/exam3.png" height ="400">
 <img src="assets/readme/exam4.png" height ="400">
+</div>
+
+## Profile Page (Profil Sayfası)
+</br>
+<div class="row">
+<img src="assets/readme/profil1.png" height ="400">
+<img src="assets/readme/profil2.png" height ="400">
+<img src="assets/readme/profil3.png" height ="400">
+</div>
+
+## Profile Edit Page (Profil Düzenleme Sayfası)
+</br>
+<div class="row">
+<img src="assets/readme/edit1.png" height ="400">
+<img src="assets/readme/edit2.png" height ="400">
+<img src="assets/readme/edit3.png" height ="400">
+<img src="assets/readme/edit4.png" height ="400">
+<img src="assets/readme/edit5.png" height ="400">
+<img src="assets/readme/edit6.png" height ="400">
+<img src="assets/readme/edit7.png" height ="400">
+<img src="assets/readme/edit8.png" height ="400">
 </div>
