@@ -74,6 +74,8 @@
 <img src="assets/readme/egitim4.png" height ="400">
 </div>
 
+</br>
+
 ## Home Page / exams menu (Anasayfa-Sınavlarım Menüleri)
 - Sınavlarım
 <div class="row">
@@ -131,4 +133,46 @@
 <img src="assets/readme/edit6.png" height ="400">
 <img src="assets/readme/edit7.png" height ="400">
 <img src="assets/readme/edit8.png" height ="400">
+</div>
+
+</br>
+
+## Catalog Page (Katalog Sayfası)
+</br>
+<div class="row">
+<img src="assets/readme/katalog1.png" height ="400">
+<img src="assets/readme/katalog2.png" height ="400">
+<img src="assets/readme/katalog3.png" height ="400">
+<img src="assets/readme/katalog4.png" height ="400">
+<img src="assets/readme/katalog5.png" height ="400">
+<img src="assets/readme/katalog6.png" height ="400">
+</div>
+
+</br>
+
+## Calendar Page (Takvim Sayfası)
+</br>
+<div class="row">
+<img src="assets/readme/takvim1.png" height ="400">
+<img src="assets/readme/takvim2.png" height ="400">
+</div>
+
+</br>
+
+## Float Action Button (FAB Menü)
+</br>
+<div class="row">
+<img src="assets/readme/fab1.png" height ="400">
+<img src="assets/readme/fab2.png" height ="400">
+</div>
+
+
+</br>
+
+# More (Daha Fazla Göster)
+</br>
+<div class="row">
+<img src="assets/readme/more1.png" height ="400">
+<img src="assets/readme/more2.png" height ="400">
+<img src="assets/readme/more3.png" height ="400">
 </div>
