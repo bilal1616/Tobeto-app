@@ -32,3 +32,25 @@
 <img src="assets/readme/home1.png" height ="400">
 <img src="assets/readme/home2.png" height ="400">
 </div>
+
+## Home Page / information menu
+- Başvurularım
+<div class="row">
+<img src="assets/readme/basvuru.png" height ="400">
+</div>
+- Duyuru ve Haberlerim
+<div class="row">
+<img src="assets/readme/duyuru1.png" height ="400">
+<img src="assets/readme/duyuru2.png" height ="400">
+</div>
+- Anketlerim
+<div class="row">
+<img src="assets/readme/anket.png" height ="400">
+</div>
+- Eğitimlerim
+<div class="row">
+<img src="assets/readme/egitim1.png" height ="400">
+<img src="assets/readme/egitim2.png" height ="400">
+<img src="assets/readme/egitim3.png" height ="400">
+<img src="assets/readme/egitim4.png" height ="400">
+</div>
