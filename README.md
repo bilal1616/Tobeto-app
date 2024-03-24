@@ -1,7 +1,8 @@
 
 # tobeto_app
 
-İstanbul Kodluyor Projesi, eğitim ve kişisel gelişim odaklı bir platform olan Tobeto'nun mobil uygulama prototipi.
+## Proje Tanıtımı
+- İstanbul Kodluyor Projesi, eğitim ve kişisel gelişim odaklı bir platform olan Tobeto'nun mobil uygulama prototipi.
 
 ## Renk Referansı
 
@@ -33,7 +34,7 @@
 <img src="assets/readme/home2.png" height ="400">
 </div>
 
-## Home Page / information menu (Ansasyfa-Bilgilendirme Menü)
+## Home Page / informations menu (Anasayfa-Bilgilendirme Menüleri)
 - Başvurularım
 <div class="row">
 <img src="assets/readme/basvuru.png" height ="400">
@@ -58,7 +59,7 @@
 <img src="assets/readme/egitim4.png" height ="400">
 </div>
 
-## Home Page / exams menu (Ansayfa-Sınavlarım Menü)
+## Home Page / exams menu (Anasayfa-Sınavlarım Menüleri)
 - Sınavlarım
 <div class="row">
 <img src="assets/readme/sınav1.png" height ="400">
