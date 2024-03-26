@@ -76,26 +76,26 @@
 
 </br>
 
-- Eğitimlerim Video İzlenme Verileri
+# Eğitimlerim Video İzlenme Verileri
 
 - Video Kaydedilen Son Veriden Devam Ediyor
 <div class="row">
 <img src="assets/readme/izle.png" height ="400">
 <img src="assets/readme/izle1.png" height ="400">
 
-</br>
+</br></br>
 
 - Video Verisi Güncellenerek Kaydediliyor
 <img src="assets/readme/izlevekaydet.png" height ="400">
 
-</br>
+</br></br>
 
 - Video İzlenme İşlemi Sona Erdiğinde Play Butonu Deaktif Duruma Geçiyor
 <img src="assets/readme/izlevideobitsin.png" height ="400">
 <img src="assets/readme/izlevideobitsin1.png" height ="400">
 </div>
 
-</br>
+</br></br>
 
 ## Home Page / exams menu (Anasayfa-Sınavlarım Menüleri)
 - Sınavlarım
