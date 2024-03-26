@@ -76,6 +76,17 @@
 
 </br>
 
+- Eğitimlerim Video İzlenme Verileri
+<div class="row">
+<img src="assets/readme/izle.png" height ="400">
+<img src="assets/readme/izle1.png" height ="400">
+<img src="assets/readme/izlevekaydet.png" height ="400">
+<img src="assets/readme/izlevideobitsin.png" height ="400">
+<img src="assets/readme/izlevideobitsin1.png" height ="400">
+</div>
+
+</br>
+
 ## Home Page / exams menu (Anasayfa-Sınavlarım Menüleri)
 - Sınavlarım
 <div class="row">
