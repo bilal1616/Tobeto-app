@@ -61,7 +61,7 @@ class _ReviewsExamState extends State<ReviewsExam> {
                 Navigator.of(context).pop();
                 saveResult(correctCount, totalCount - correctCount);
               },
-              child: Text('Okay'),
+              child: Text('Tamam'),
             ),
           ],
         );
