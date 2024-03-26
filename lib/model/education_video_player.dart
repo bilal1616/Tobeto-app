@@ -107,8 +107,8 @@ class _EducationVideoPlayerState extends State<EducationVideoPlayer> {
       final snapshots = await videosRef.get();
       for (var doc in snapshots.docs) {
         final data = doc.data();
-        final title = data?['title'];
-        final percentageWatched = data?['percentage_watched'];
+        final title = data['title'];
+        final percentageWatched = data['percentage_watched'];
         watchedVideoData[title] = percentageWatched;
       }
       setState(() {});
@@ -192,36 +192,19 @@ class _EducationVideoPlayerState extends State<EducationVideoPlayer> {
               ),
             ],
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
           Padding(
             padding: const EdgeInsets.only(left: 15.0),
-            child: Row(
-              children: [
-                Icon(Icons.list), // Liste ikonu
-                SizedBox(
-                    width: 10), // İkon ile metin arasına boşluk eklemek için
-                Text(
-                  'Ders İçeriği',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ],
+            child: Text(
+              'Ders İçeriği',
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           _buildVideoList(),
-          Divider(),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           Padding(
             padding: const EdgeInsets.only(left: 15.0),
-            child: Row(
-              children: [
-                Icon(Icons.movie),
-                SizedBox(
-                    width: 10), // İkon ile metin arasına boşluk eklemek için
-                Text(
-                  'İzlediğiniz Videolar',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ],
+            child: Text(
+              'İzlediğiniz Videolar',
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           _buildWatchedVideoList(),
@@ -246,11 +229,14 @@ class _EducationVideoPlayerState extends State<EducationVideoPlayer> {
       itemCount: widget.videos.length,
       itemBuilder: (context, index) {
         final video = widget.videos[index];
+        final isCompleted = watchedVideoData[video.title] == 100.0;
         return ListTile(
           title: Text(video.title),
           trailing: IconButton(
-            icon: Icon(Icons.play_arrow),
-            onPressed: () => _playVideo(video),
+            icon: isCompleted ? Icon(Icons.lock) : Icon(Icons.play_arrow),
+            onPressed: isCompleted
+                ? null
+                : () => _playVideo(video), // Tamamlandıysa onPressed'i devre dışı bırakın
           ),
         );
       },
@@ -260,25 +246,25 @@ class _EducationVideoPlayerState extends State<EducationVideoPlayer> {
   Widget _buildWatchedVideoList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: watchedVideoData.entries
-          .map(
-            (entry) => ListTile(
-              title: Text(entry.key),
-              subtitle: LinearPercentIndicator(
-                width: MediaQuery.of(context).size.width - 48,
-                lineHeight: 20.0,
-                percent: entry.value / 100,
-                backgroundColor: Colors.grey,
-                progressColor: Colors.green,
-                center: Text('${entry.value.toInt()}%'),
-              ),
-            ),
-          )
-          .toList(),
+      children: watchedVideoData.entries.map((entry) {
+        final percentage = entry.value.toInt();
+        return ListTile(
+          title: Text(entry.key),
+          subtitle: LinearPercentIndicator(
+            width: MediaQuery.of(context).size.width - 48,
+            lineHeight: 20.0,
+            percent: percentage / 100,
+            backgroundColor: Colors.grey,
+            progressColor: Colors.green,
+            center: Text('$percentage%'),
+          ),
+        );
+      }).toList(),
     );
   }
 
   Widget _videoControls(BuildContext context) {
+    final isCompleted = watchedVideoData[_currentVideo.title] == 100.0;
     return Container(
       color: Colors.black45,
       padding: const EdgeInsets.all(8.0),
@@ -296,13 +282,15 @@ class _EducationVideoPlayerState extends State<EducationVideoPlayer> {
             icon: Icon(
                 _controller.value.isPlaying ? Icons.pause : Icons.play_arrow),
             color: Colors.white,
-            onPressed: () {
-              setState(() {
-                _controller.value.isPlaying
-                    ? _controller.pause()
-                    : _controller.play();
-              });
-            },
+            onPressed: isCompleted
+                ? null
+                : () {
+                    setState(() {
+                      _controller.value.isPlaying
+                          ? _controller.pause()
+                          : _controller.play();
+                    });
+                  },
           ),
           IconButton(
             icon: Icon(_isMuted ? Icons.volume_off : Icons.volume_up),
@@ -360,7 +348,45 @@ class _EducationVideoPlayerState extends State<EducationVideoPlayer> {
     await _controller.initialize();
     _controller.addListener(_updateWatchData);
     setState(() {});
-    _controller.play();
+
+    // Kaydedilen son izlenme verisini çek
+    final lastWatchedPercentage = watchedVideoData[_currentVideo.title] ?? 0.0;
+
+    // Alert dialog göster
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Son İzlenen Yerden Devam Edilsin Mi?'),
+          content: Text(
+              'Videoyu ${lastWatchedPercentage.toInt()}% izlemişsiniz. Son izlenen yerden devam etmek ister misiniz?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Hayır'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Videoyu son izlenen yerden başlat
+                _controller.seekTo(Duration(
+                    seconds: (lastWatchedPercentage *
+                            _controller.value.duration.inSeconds ~/
+                            100)
+                        .toInt()));
+                _controller.play(); // Videoyu oynat
+              },
+              child: Text('Evet'),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Videoyu oynat
+    // _controller.play(); // Bu satırı yorum satırına alıyoruz, kullanıcı Evet'e bastığında videoyu başlatacağız
   }
 
   @override
