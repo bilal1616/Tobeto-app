@@ -74,26 +74,29 @@
 <img src="assets/readme/egitim4.png" height ="400">
 </div>
 
-</br>
+</br></br>
 
-- Eğitimlerim Video İzlenme Verileri
+- Eğitimlerim (Eğitim Videosu İzlenme Verileri)
 
-</br>
 
-- Video Kaydedilen Son Veriden Devam Ediyor
+###### Video Kaydedilen Son Veriden Devam Ediyor
 <div class="row">
 <img src="assets/readme/izle.png" height ="400">
 <img src="assets/readme/izle1.png" height ="400">
 
-- Video Verisi Güncellenerek Kaydediliyor
+</br></br>
+
+###### Video Verisi Güncellenerek Kaydediliyor
 <img src="assets/readme/izlevekaydet.png" height ="400">
 
-- Video İzlenme İşlemi Sona Erdiğinde Play Butonu Deaktif Duruma Geçiyor
+</br></br>
+
+###### Video İzleme İşlemi Sona Erdiğinde Play Butonu Deaktif Duruma Geçiyor
 <img src="assets/readme/izlevideobitsin.png" height ="400">
 <img src="assets/readme/izlevideobitsin1.png" height ="400">
 </div>
 
-</br>
+</br></br>
 
 ## Home Page / exams menu (Anasayfa-Sınavlarım Menüleri)
 - Sınavlarım
