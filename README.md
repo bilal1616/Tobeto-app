@@ -77,10 +77,18 @@
 </br>
 
 - Eğitimlerim Video İzlenme Verileri
+
+</br>
+
+- Video Kaydedilen Veriden Devam Ediyor
 <div class="row">
 <img src="assets/readme/izle.png" height ="400">
 <img src="assets/readme/izle1.png" height ="400">
+
+- Video Verisi Güncellenerek Kaydediliyor
 <img src="assets/readme/izlevekaydet.png" height ="400">
+
+- Video İzlenme İşlemi Sona Erdiğinde Play Butonu Deaktif Duruma Geçiyor
 <img src="assets/readme/izlevideobitsin.png" height ="400">
 <img src="assets/readme/izlevideobitsin1.png" height ="400">
 </div>
