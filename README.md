@@ -80,19 +80,19 @@
 
 </br>
 
-+ Video Kaydedilen Son Veriden Devam Ediyor
+### Video Kaydedilen Son Veriden Devam Ediyor
 <div class="row">
 <img src="assets/readme/izle.png" height ="400">
 <img src="assets/readme/izle1.png" height ="400">
 
 </br></br>
 
-+ Video Verisi Güncellenerek Kaydediliyor
+### Video Verisi Güncellenerek Kaydediliyor
 <img src="assets/readme/izlevekaydet.png" height ="400">
 
 </br></br>
 
-+ Video İzleme İşlemi Sona Erdiğinde Play Butonu Deaktif Duruma Geçiyor
+### Video İzleme İşlemi Sona Erdiğinde Play Butonu Deaktif Duruma Geçiyor
 <img src="assets/readme/izlevideobitsin.png" height ="400">
 <img src="assets/readme/izlevideobitsin1.png" height ="400">
 </div>
