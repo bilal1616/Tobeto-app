@@ -80,7 +80,7 @@
 
 </br>
 
-- Video Kaydedilen Veriden Devam Ediyor
+- Video Kaydedilen Son Veriden Devam Ediyor
 <div class="row">
 <img src="assets/readme/izle.png" height ="400">
 <img src="assets/readme/izle1.png" height ="400">
