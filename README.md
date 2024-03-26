@@ -76,7 +76,9 @@
 
 </br>
 
-# Eğitimlerim Video İzlenme Verileri
+# Eğitimlerim
+
+- Eğitimlerim Video İzlenme Verileri
 
 - Video Kaydedilen Son Veriden Devam Ediyor
 <div class="row">
