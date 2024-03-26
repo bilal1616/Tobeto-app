@@ -76,7 +76,7 @@
 
 </br></br>
 
-- Eğitimlerim (Eğitim Videosu İzleme Verileri)
+- Eğitimlerim (Eğitim Videosu İzlenme Verileri)
 
 
 ###### Video Kaydedilen Son Veriden Devam Ediyor
