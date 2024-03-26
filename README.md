@@ -78,7 +78,8 @@
 
 - Eğitimlerim Video İzlenme Verileri
 
-</br>
+
+
 - Video Kaydedilen Son Veriden Devam Ediyor
 <div class="row">
 <img src="assets/readme/izle.png" height ="400">
