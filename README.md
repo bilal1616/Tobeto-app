@@ -74,11 +74,10 @@
 <img src="assets/readme/egitim4.png" height ="400">
 </div>
 
-</br>
+</br></br>
 
 - Eğitimlerim (Eğitim Videosu İzleme Verileri)
 
-</br>
 
 ##### Video Kaydedilen Son Veriden Devam Ediyor
 <div class="row">
